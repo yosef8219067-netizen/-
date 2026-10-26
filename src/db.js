@@ -273,17 +273,13 @@ function getSettings() {
 }
 
 function setSettings(patch) {
-  const stmt = db.prepare(
-    'INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at'
-  );
   const ts = now();
-  try {
-    for (const [key, value] of Object.entries(patch)) {
-      if (value === undefined) continue;
-      stmt.run([key, value === null ? '' : String(value), ts]);
-    }
-  } finally {
-    stmt.finalize();
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === undefined) continue;
+    run(
+      'INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at',
+      [key, value === null ? '' : String(value), ts]
+    );
   }
 }
 
