@@ -1,0 +1,45 @@
+<%- include('../partials/admin-head') %>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>سجل النشاط الإداري</h2>
+    <span class="chip">آخر <%= ar(logs.length) %> عملية</span>
+  </div>
+  <% if (logs.length) { %>
+    <div class="table-wrap" style="border:0;box-shadow:none">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>المستخدم</th>
+            <th>العملية</th>
+            <th>الكيان</th>
+            <th>التفاصيل</th>
+            <th>التاريخ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(l => { %>
+            <tr>
+              <td class="mono-num"><%= ar(l.id) %></td>
+              <td class="cell-title"><%= l.user_name || 'النظام' %></td>
+              <td><code dir="ltr"><%= l.action %></code></td>
+              <td class="cell-sub"><%= l.entity || '—' %><%= l.entity_id ? ' #' + l.entity_id : '' %></td>
+              <td class="cell-sub"><%= l.details || '—' %></td>
+              <td class="cell-sub"><%= fmt(l.created_at) %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="panel__body">
+      <div class="empty-state">
+        <h3>السجل فارغ</h3>
+        <p>ستظهر هنا كل عمليات الإضافة والتعديل والحذف والنشر التي تُنفَّذ من لوحة التحكم.</p>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-foot') %>

@@ -1,0 +1,62 @@
+<%- include('../partials/admin-head') %>
+
+<% if (forced) { %>
+  <div class="helper">
+    <strong>يلزم تغيير كلمة المرور.</strong> حسابك يستخدم كلمة مرور مؤقتة. اختر كلمة مرور جديدة للمتابعة بأمان.
+  </div>
+<% } %>
+
+<div class="panel">
+  <div class="panel__head"><h2>بيانات حسابي</h2></div>
+  <div class="panel__body">
+    <dl class="detail-list">
+      <div><dt>الاسم</dt><dd><%= user.name %></dd></div>
+      <div><dt>البريد</dt><dd dir="ltr"><%= user.email %></dd></div>
+      <div><dt>الصلاحية</dt><dd><%= ROLE_LABEL[user.role] || user.role %></dd></div>
+      <div><dt>آخر دخول</dt><dd><%= user.lastLoginAt ? fmt(user.lastLoginAt) : 'الآن' %></dd></div>
+    </dl>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>تغيير كلمة المرور</h2></div>
+  <form method="post" action="/admin/account/password" class="form-grid">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="panel__body">
+      <% if (errors && errors.form) { %>
+        <div class="toast toast--err" role="alert"><span aria-hidden="true">✕</span><span><%= errors.form %></span></div>
+      <% } %>
+      <div class="field">
+        <label for="current_password">كلمة المرور الحالية</label>
+        <input class="input" id="current_password" name="current_password" type="password" required autocomplete="current-password">
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="new_password">كلمة المرور الجديدة</label>
+          <input class="input" id="new_password" name="new_password" type="password" required minlength="8" autocomplete="new-password">
+          <span class="hint">8 أحرف على الأقل وتحتوي حروفًا وأرقامًا.</span>
+        </div>
+        <div class="field">
+          <label for="confirm_password">تأكيد كلمة المرور</label>
+          <input class="input" id="confirm_password" name="confirm_password" type="password" required minlength="8" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="helper">عند تغيير كلمة المرور تُلغى كل جلساتك الأخرى على الأجهزة الأخرى.</div>
+    </div>
+    <div class="panel__foot">
+      <button class="btn" type="submit">تحديث كلمة المرور</button>
+    </div>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>الجلسة</h2></div>
+  <div class="panel__body">
+    <form method="post" action="/admin/logout">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn btn--white" type="submit">تسجيل الخروج</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/admin-foot') %>
