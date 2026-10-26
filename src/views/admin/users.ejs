@@ -1,0 +1,113 @@
+<%- include('../partials/admin-head') %>
+
+<div class="helper">
+  <strong>سياسة الحسابات:</strong> المدير يستطيع إنشاء حسابات وتعطيلها وتغيير الأدوار وإعادة تعيين كلمات المرور.
+  الموظف يرى المشروعات والوسائط والطلبات فقط. لا يمكن لأي مستخدم تعطيل حسابه أو تغيير دوره بنفسه،
+  ولا يمكن إزالة آخر مدير نشط في النظام.
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>إضافة مستخدم</h2></div>
+  <form method="post" action="/admin/users" class="form-grid">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="name">الاسم</label>
+          <input class="input" id="name" name="name" type="text" required minlength="3" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="email">البريد الإلكتروني</label>
+          <input class="input" id="email" name="email" type="email" required maxlength="180" dir="ltr" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="password">كلمة المرور المؤقتة</label>
+          <input class="input" id="password" name="password" type="password" required minlength="8" autocomplete="new-password">
+          <span class="hint">8 أحرف على الأقل مع حروف وأرقام. يُطلب من المستخدم تغييرها عند أول دخول.</span>
+        </div>
+        <div class="field">
+          <label for="role">الصلاحية</label>
+          <select class="select" id="role" name="role">
+            <option value="staff">موظف</option>
+            <option value="admin">مدير</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="panel__foot">
+      <button class="btn" type="submit">إنشاء الحساب</button>
+      <span class="cell-sub">كلمة المرور تُخزَّن مشفّرة بـ bcrypt ولا يمكن استعراضها لاحقًا.</span>
+    </div>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>المستخدمون (<%= ar(users.length) %>)</h2></div>
+</div>
+
+<% users.forEach(u => { %>
+  <div class="panel">
+    <div class="panel__head">
+      <h2><%= u.name %></h2>
+      <div class="btn-row">
+        <span class="badge-role <%= u.role === 'admin' ? 'badge-role--admin' : '' %>"><%= ROLE_LABEL[u.role] || u.role %></span>
+        <% if (!u.is_active) { %><span class="chip chip--archived">معطّل</span><% } %>
+        <% if (u.id === user.id) { %><span class="chip chip--new">حسابك</span><% } %>
+        <% if (u.must_change_password) { %><span class="chip chip--draft">يلزم تغيير كلمة المرور</span><% } %>
+      </div>
+    </div>
+    <div class="panel__body">
+      <dl class="detail-list">
+        <div><dt>البريد</dt><dd dir="ltr"><%= u.email %></dd></div>
+        <div><dt>أُنشئ</dt><dd><%= fmt(u.created_at) %></dd></div>
+        <div><dt>آخر دخول</dt><dd><%= u.last_login_at ? fmt(u.last_login_at) : 'لم يدخل بعد' %></dd></div>
+      </dl>
+
+      <% if (u.id !== user.id) { %>
+        <form method="post" action="/admin/users/<%= u.id %>" class="form-grid form-grid--3" style="margin-top:14px">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="field">
+            <label for="name-<%= u.id %>">الاسم</label>
+            <input class="input" id="name-<%= u.id %>" name="name" type="text" value="<%= u.name %>" maxlength="120">
+          </div>
+          <div class="field">
+            <label for="role-<%= u.id %>">الصلاحية</label>
+            <select class="select" id="role-<%= u.id %>" name="role">
+              <option value="staff" <%- u.role === 'staff' ? 'selected' : '' %>>موظف</option>
+              <option value="admin" <%- u.role === 'admin' ? 'selected' : '' %>>مدير</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="check">
+              <input type="checkbox" name="is_active" value="1" <%- u.is_active ? 'checked' : '' %>>
+              الحساب نشط
+            </label>
+            <div class="btn-row" style="margin-top:8px">
+              <button class="btn btn--sm" type="submit">حفظ</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="btn-row" style="margin-top:10px">
+          <form method="post" action="/admin/users/<%= u.id %>/password" class="btn-row" data-confirm="سيتم تعيين كلمة مرور جديدة وإلغاء كل جلسات هذا المستخدم. متابعة؟">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <input class="input" name="password" type="password" placeholder="كلمة مرور جديدة" required minlength="8" autocomplete="new-password" style="max-width:240px">
+            <button class="btn btn--sm btn--white" type="submit">إعادة تعيين كلمة المرور</button>
+          </form>
+          <form method="post" action="/admin/users/<%= u.id %>/delete" data-confirm="سيتم حذف الحساب نهائيًا. متابعة؟">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn--sm btn--danger" type="submit">حذف الحساب</button>
+          </form>
+        </div>
+      <% } else { %>
+        <div class="helper" style="margin-top:14px">
+          لتغيير بيانات حسابك أو كلمة مرورك استخدم صفحة <a href="/admin/account" style="border-bottom:2px solid var(--ink);font-weight:900">حسابي</a>.
+        </div>
+      <% } %>
+    </div>
+  </div>
+<% }); %>
+
+<%- include('../partials/admin-foot') %>

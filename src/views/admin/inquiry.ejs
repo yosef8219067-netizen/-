@@ -19,7 +19,7 @@
       </dd></div>
       <div><dt>تاريخ الإرسال</dt><dd><%= fmt(inquiry.created_at) %> (<%= ago(inquiry.created_at) %>)</dd></div>
       <div><dt>آخر تحديث</dt><dd><%= inquiry.updated_at ? fmt(inquiry.updated_at) : '—' %></dd></div>
-      <div><dt>الصفحة المصدر</dt><dd class="cell-sub" dir="ltr"><%= inquiry.source_path || '—' %></dd></div>
+      <div><dt>الصفحة المصدر</dt><dd class="cell-sub" dir="ltr"><%= inquiry.source || '—' %></dd></div>
     </dl>
 
     <h3 style="margin-top:22px">الرسالة</h3>
