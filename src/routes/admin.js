@@ -733,9 +733,6 @@ router.post('/users/:id', A.requireAdmin, (req, res) => {
   if (user.role === 'admin' && (role !== 'admin' || !isActive) && A.countAdmins() <= 1) {
     return redirectWith(res, '/admin/users', 'last_admin');
   }
-  if (user.role === 'admin' && (role !== 'admin' || !isActive) && A.countAdmins() <= 1) {
-    return redirectWith(res, '/admin/users', 'last_admin');
-  }
 
   run('UPDATE users SET name = ?, role = ?, is_active = ?, updated_at = ? WHERE id = ?', [name, role, isActive, now(), id]);
   if (!isActive) run('DELETE FROM sessions WHERE user_id = ?', [id]);
