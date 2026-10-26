@@ -1,0 +1,117 @@
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer__grid">
+    <div>
+      <div class="footer__brand">
+        <span class="brand__mark" aria-hidden="true">م</span>
+        <span class="brand__text">
+          <span class="brand__name"><%= settings.company_name %></span>
+          <span class="brand__sub"><%= settings.tagline %></span>
+        </span>
+      </div>
+      <p class="footer__desc"><%= settings.about_short %></p>
+      <% const socials = [
+        ['فيسبوك', settings.facebook_url],
+        ['إنستجرام', settings.instagram_url],
+        ['تيك توك', settings.tiktok_url],
+        ['لينكدإن', settings.linkedin_url],
+        ['يوتيوب', settings.youtube_url]
+      ].filter(s => s[1]); %>
+      <% if (socials.length) { %>
+      <div class="socials" style="margin-top:14px">
+        <% socials.forEach(s => { %>
+          <a href="<%= s[1] %>" target="_blank" rel="noopener"><%= s[0] %></a>
+        <% }); %>
+      </div>
+      <% } %>
+    </div>
+
+    <div>
+      <div class="footer__title">روابط سريعة</div>
+      <div class="footer__links">
+        <a href="/projects">المشروعات</a>
+        <a href="/services">الخدمات</a>
+        <a href="/gallery">معرض الصور</a>
+        <a href="/about">عن الشركة</a>
+        <a href="/team">فريق العمل</a>
+        <a href="/contact">تواصل معنا</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer__title">التواصل</div>
+      <div class="footer__contact">
+        <a href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>" style="direction:ltr;display:inline-block">
+          <%= settings.phone_display %>
+        </a>
+        <a href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener">واتساب مباشر</a>
+        <% if (settings.email) { %>
+          <a href="mailto:<%= settings.email %>"><%= settings.email %></a>
+        <% } %>
+        <% if (settings.address) { %>
+          <span><%= settings.address %></span>
+        <% } %>
+        <% if (settings.working_hours) { %>
+          <span>مواعيد العمل: <%= settings.working_hours %></span>
+        <% } %>
+        <span><%= settings.owner_name ? 'المسؤول: ' + settings.owner_name : '' %></span>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer__title">بيانات الشركة</div>
+      <p class="footer__desc"><%= settings.footer_note %></p>
+      <% const official = [
+        ['السجل التجاري', settings.commercial_register],
+        ['البطاقة الضريبية', settings.tax_id],
+        ['رقم الترخيص', settings.license_no]
+      ].filter(item => item[1]); %>
+      <% if (official.length || settings.official_notes) { %>
+      <div class="footer__official">
+        <% official.forEach(item => { %>
+          <span><%= item[0] %>: <strong dir="ltr"><%= item[1] %></strong></span>
+        <% }); %>
+        <% if (settings.official_notes) { %><span><%= settings.official_notes %></span><% } %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="wrap footer__bottom">
+    <span>© <%= currentYear %> <%= settings.company_name %> — جميع الحقوق محفوظة.</span>
+    <span>
+      <a href="/sitemap.xml" style="border-bottom:2px solid var(--gold)">خريطة الموقع</a>
+      &nbsp;•&nbsp;
+      <a href="/admin/login" style="border-bottom:2px solid var(--gold)">دخول الإدارة</a>
+    </span>
+  </div>
+</footer>
+
+<div class="floating">
+  <a href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener" class="floating--wa" aria-label="واتساب">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.5-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.5-.6c.1-.2.1-.3 0-.5l-.7-1.6c-.1-.3-.3-.3-.5-.3h-.5c-.2 0-.5.1-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.7 2.7 4.2 3.7 2 .8 2.4.7 2.9.6.4 0 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1z"/></svg>
+  </a>
+  <a href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>" aria-label="اتصال هاتفي">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>
+  </a>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="عارض الصور" hidden>
+  <div class="lightbox__top">
+    <span class="lightbox__cap" id="lbCounter"></span>
+    <button class="btn btn--white btn--sm" type="button" id="lbClose" aria-label="إغلاق">إغلاق ✕</button>
+  </div>
+  <div class="lightbox__stage">
+    <img id="lbImage" src="" alt="">
+  </div>
+  <div class="lightbox__bottom">
+    <button class="btn btn--sm" type="button" id="lbPrev">السابق</button>
+    <span class="lightbox__cap" id="lbCap"></span>
+    <button class="btn btn--sm" type="button" id="lbNext">التالي</button>
+  </div>
+</div>
+
+<script src="/js/main.js" defer></script>
+</body>
+</html>
