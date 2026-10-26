@@ -1,0 +1,254 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <div class="wrap hero__grid">
+    <div>
+      <span class="hero__badge"><%= settings.hero_badge %></span>
+      <h1 class="hero__title"><%= settings.hero_title %></h1>
+      <p class="hero__desc"><%= settings.hero_subtitle %></p>
+
+      <div class="btn-row">
+        <a class="btn" href="/projects">استعرض المشروعات</a>
+        <a class="btn btn--white" href="/contact">اطلب استشارة</a>
+      </div>
+
+      <div class="hero__phone">
+        <div>
+          <span>للتواصل المباشر</span>
+          <a href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>"><strong><%= settings.phone_display %></strong></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__side">
+      <% if (featured.length && featured[0].primary_image) { %>
+        <div class="hero-media">
+          <img src="/uploads/<%= featured[0].primary_image %>" alt="<%= featured[0].title %>" loading="eager" decoding="async">
+        </div>
+        <span class="hero-stamp">من مشروعاتنا: <%= featured[0].title %></span>
+      <% } else { %>
+        <div class="hero-card hero-card--gold">
+          <div class="hero-card__label">تواصل مباشر</div>
+          <a href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>" class="hero-card__value" style="direction:ltr;display:block"><%= settings.phone_display %></a>
+          <div style="margin-top:12px">
+            <a class="btn btn--ink btn--block" href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener">راسلنا على واتساب</a>
+          </div>
+        </div>
+        <div class="hero-card hero-card--navy">
+          <div class="hero-card__label">على الموقع الآن</div>
+          <ul class="hero-card__list">
+            <li><%= ar(stats.projects) %> مشروع منشور</li>
+            <li><%= ar(stats.images) %> صورة داخل المعرض</li>
+            <li><%= ar(stats.services) %> خدمة معروضة</li>
+            <li>بيانات كل مشروع تُحدَّث من لوحة التحكم</li>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <% for (let i = 0; i < 2; i++) { %>
+      <% ['مشروعات عقارية', 'صور حقيقية من الموقع', 'تواصل مباشر مع المسؤول', settings.phone_display, 'بيانات تُحدَّث باستمرار', 'مراسي العاصمة الحديثة'].forEach(text => { %>
+        <span class="ticker__item"><%= text %></span>
+      <% }); %>
+    <% } %>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">عن الشركة</span>
+        <h2 class="h2">مراسي العاصمة الحديثة<span class="h2__bar"></span></h2>
+        <p class="lead"><%= settings.about_short %></p>
+      </div>
+      <a class="btn btn--navy" href="/about">تعرّف علينا أكثر</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__num"><%= ar(stats.projects) %></div>
+        <div class="stat__label">مشروع منشور على الموقع</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num"><%= ar(stats.cities) %></div>
+        <div class="stat__label">مدينة داخل المشروعات</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num"><%= ar(stats.images) %></div>
+        <div class="stat__label">صورة في المعرض</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num"><%= ar(stats.services) %></div>
+        <div class="stat__label">خدمة معروضة</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--paper">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">المشروعات</span>
+        <h2 class="h2">مشروعات معروضة الآن<span class="h2__bar"></span></h2>
+      </div>
+      <a class="btn btn--white" href="/projects">كل المشروعات</a>
+    </div>
+
+    <% if (featured.length) { %>
+      <div class="grid grid--3">
+        <% featured.forEach(project => { %>
+          <%- include('partials/project-card', { project }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty__title">لا توجد مشروعات منشورة بعد</div>
+        <p class="empty__text">
+          نعرض هنا المشروعات الحقيقية فقط. تُضاف المشروعات من لوحة التحكم وتظهر على الموقع مباشرة بعد النشر،
+          ولن تُعرض أي صور أو بيانات تجريبية بدلًا منها.
+        </p>
+        <a class="btn btn--navy" href="/admin/login">الدخول إلى لوحة التحكم</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">الخدمات</span>
+        <h2 class="h2">كيف نساعدك<span class="h2__bar"></span></h2>
+        <p class="lead">خدمات نعمل بها مع العميل منذ أول استفسار وحتى ما بعد التعاقد.</p>
+      </div>
+      <a class="btn btn--white" href="/services">كل الخدمات</a>
+    </div>
+
+    <% if (services.length) { %>
+      <div class="grid grid--4">
+        <% services.slice(0, 4).forEach((service, i) => { %>
+          <article class="service">
+            <span class="service__num"><%= String(i + 1).padStart(2, '0') %></span>
+            <h3 class="service__title"><%= service.title %></h3>
+            <p class="service__desc"><%= service.description %></p>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty__title">لم تُضف خدمات بعد</div>
+        <p class="empty__text">تُدار الخدمات من لوحة التحكم، وتظهر هنا فور إضافتها.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="section section--navy">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow eyebrow--gold">لماذا نحن</span>
+        <h2 class="h2">طريقة عمل نلتزم بها<span class="h2__bar"></span></h2>
+      </div>
+    </div>
+
+    <div class="grid grid--4">
+      <div class="feature">
+        <div class="feature__title">بيانات من مصدرها</div>
+        <p class="feature__text">المساحات والأسعار وحالة التوافر تُدخل من داخل الشركة وتُعرض كما هي.</p>
+      </div>
+      <div class="feature">
+        <div class="feature__title">صور حقيقية</div>
+        <p class="feature__text">لا نستخدم صورًا تجريبية للمشروعات؛ كل صورة ترفعها الشركة لمشروعها.</p>
+      </div>
+      <div class="feature">
+        <div class="feature__title">تواصل مباشر</div>
+        <p class="feature__text">رقم هاتف وواتساب واضحان في كل صفحة، مع نموذج طلب محفوظ في قاعدة البيانات.</p>
+      </div>
+      <div class="feature">
+        <div class="feature__title">تحديث مستمر</div>
+        <p class="feature__text">أي تعديل من لوحة التحكم يظهر على الموقع فورًا دون الحاجة لتعديل الكود.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (gallery.length) { %>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">المعرض</span>
+        <h2 class="h2">صور من مشروعاتنا<span class="h2__bar"></span></h2>
+      </div>
+      <a class="btn btn--white" href="/gallery">المعرض الكامل</a>
+    </div>
+
+    <div class="gallery-grid">
+      <% gallery.forEach(item => { %>
+        <button class="gallery-item" type="button"
+          data-lightbox
+          data-src="/uploads/<%= item.filename %>"
+          data-caption="<%= item.caption || item.alt || item.project_title %>">
+          <img src="/uploads/<%= item.filename %>" alt="<%= item.alt || item.project_title %>" loading="lazy" decoding="async">
+          <span class="gallery-item__cap"><%= item.project_title %></span>
+        </button>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (showTeam) { %>
+<section class="section section--paper">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">الفريق</span>
+        <h2 class="h2">من تتواصل معهم<span class="h2__bar"></span></h2>
+      </div>
+      <a class="btn btn--white" href="/team">كل الفريق</a>
+    </div>
+    <div class="grid grid--3">
+      <% team.forEach(member => { %>
+        <article class="member">
+          <div class="member__photo">
+            <% if (member.image_path) { %>
+              <img src="/uploads/<%= member.image_path %>" alt="<%= member.name %>" loading="lazy" decoding="async">
+            <% } else { %>
+              <div class="ph"><span class="ph__mark">م</span><span class="ph__text">بدون صورة</span></div>
+            <% } %>
+          </div>
+          <div class="member__body">
+            <div class="member__name"><%= member.name %></div>
+            <% if (member.role_title) { %><div class="member__role"><%= member.role_title %></div><% } %>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="cta-band">
+  <div class="wrap cta-band__inner">
+    <div>
+      <h2>تريد معرفة تفاصيل مشروع معيّن؟</h2>
+      <p class="muted" style="margin-top:10px;color:#c7d2e4">اتصل بنا مباشرة أو اترك بياناتك وسنعاود التواصل معك.</p>
+    </div>
+    <div class="cta-band__actions">
+      <a class="btn" href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>">
+        <span style="direction:ltr"><%= settings.phone_display %></span>
+      </a>
+      <a class="btn btn--white" href="/contact">نموذج التواصل</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

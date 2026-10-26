@@ -1,0 +1,34 @@
+<article class="card">
+  <a class="card__media" href="/projects/<%= project.slug %>" tabindex="-1" aria-hidden="true">
+    <% if (project.primary_image) { %>
+      <img src="/uploads/<%= project.primary_image %>" alt="<%= project.title %>" loading="lazy" decoding="async">
+    <% } else { %>
+      <div class="ph">
+        <span class="ph__mark" aria-hidden="true">م</span>
+        <span class="ph__text">لم تُرفع صور لهذا المشروع بعد</span>
+      </div>
+    <% } %>
+    <% if (project.is_featured) { %><span class="card__flag">مشروع مميز</span><% } %>
+    <% if (project.image_count && project.image_count > 0) { %>
+      <span class="card__count"><%= ar(project.image_count) %> صورة</span>
+    <% } %>
+  </a>
+  <div class="card__body">
+    <h3 class="card__title"><a href="/projects/<%= project.slug %>"><%= project.title %></a></h3>
+    <% if (project.short_description) { %>
+      <p class="card__desc"><%= project.short_description %></p>
+    <% } %>
+    <div class="tag-row">
+      <% if (project.city) { %><span class="tag"><%= project.city %></span><% } %>
+      <% if (project.availability) { %><span class="tag tag--gold"><%= project.availability %></span><% } %>
+      <% if (project.area_from) { %><span class="tag">من <%= project.area_from %> م²</span><% } %>
+      <% if (project.unit_types) { %><span class="tag"><%= project.unit_types %></span><% } %>
+    </div>
+    <div class="card__meta">
+      <% if (project.price_from) { %><span>يبدأ من <%= project.price_from %></span><% } %>
+      <% if (project.location) { %><span><%= project.location %></span><% } %>
+      <% if (!project.price_from && !project.location) { %><span>البيانات التفصيلية داخل صفحة المشروع</span><% } %>
+    </div>
+    <a class="card__link" href="/projects/<%= project.slug %>">تفاصيل المشروع ←</a>
+  </div>
+</article>
