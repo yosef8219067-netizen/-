@@ -1,0 +1,63 @@
+<%- include('partials/head') %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><span>المعرض</span>
+    </nav>
+    <h1>معرض الصور والفيديوهات</h1>
+    <p>كل ما يظهر هنا مرفوع من لوحة التحكم ومربوط بمشروع منشور. اضغط على أي صورة لعرضها بالحجم الكامل.</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <% if (projects.length) { %>
+      <div class="gallery-filters">
+        <a href="/gallery" <%- !activeProject ? 'aria-current="true"' : '' %>>كل المشروعات</a>
+        <% projects.forEach(p => { %>
+          <a href="/gallery?project=<%= p.slug %>" <%- activeProject && activeProject.id === p.id ? 'aria-current="true"' : '' %>>
+            <%= p.title %> (<%= ar(p.media_count) %>)
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <% if (items.length) { %>
+      <div class="gallery-grid">
+        <% items.forEach(item => { %>
+          <% if (item.kind === 'video') { %>
+            <button class="gallery-item gallery-item--video" type="button"
+              data-lightbox data-type="video"
+              data-src="/uploads/<%= item.filename %>"
+              data-caption="<%= item.caption || item.alt || item.project_title %>">
+              <span class="ph" style="position:absolute;inset:0">
+                <span class="ph__mark" style="font-size:1.2rem">فيديو</span>
+                <span class="ph__text"><%= item.project_title %></span>
+              </span>
+              <span class="gallery-item__cap">فيديو — <%= item.project_title %></span>
+            </button>
+          <% } else { %>
+            <button class="gallery-item" type="button"
+              data-lightbox
+              data-src="/uploads/<%= item.filename %>"
+              data-caption="<%= item.caption || item.alt || item.project_title %>">
+              <img src="/uploads/<%= item.filename %>" alt="<%= item.alt || item.project_title %>" loading="lazy" decoding="async">
+              <span class="gallery-item__cap"><%= item.project_title %></span>
+            </button>
+          <% } %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty__title">المعرض فارغ حتى الآن</div>
+        <p class="empty__text">
+          لم تُرفع صور أو فيديوهات لمشروعات منشورة. ارفع الوسائط من لوحة التحكم واربطها بالمشروع لتظهر هنا تلقائيًا.
+        </p>
+        <a class="btn btn--navy" href="/admin/login">لوحة التحكم</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

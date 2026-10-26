@@ -1,0 +1,201 @@
+<%- include('partials/head', { ogImage: images.length ? '/uploads/' + images[0].filename : '' }) %>
+
+<% if (preview) { %>
+<div class="wrap">
+  <div class="toast toast--err" role="status">
+    <span class="toast__icon">!</span>
+    <span>هذه معاينة إدارية لمشروع غير منشور. الزوار لا يرون هذه الصفحة.</span>
+  </div>
+</div>
+<% } %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><a href="/projects">المشروعات</a><span>/</span><span><%= project.title %></span>
+    </nav>
+    <h1><%= project.title %></h1>
+    <div class="tag-row">
+      <% if (project.city) { %><span class="tag tag--gold"><%= project.city %></span><% } %>
+      <% if (project.availability) { %><span class="tag"><%= project.availability %></span><% } %>
+      <% if (project.status !== 'published') { %><span class="tag tag--ink">مسودة</span><% } %>
+      <% if (images.length) { %><span class="tag"><%= ar(images.length) %> صورة</span><% } %>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <div class="project-hero">
+      <div>
+        <div class="project-main-img">
+          <% if (images.length) { %>
+            <img src="/uploads/<%= images[0].filename %>" alt="<%= images[0].alt || project.title %>" loading="eager" decoding="async">
+          <% } else { %>
+            <div class="ph">
+              <span class="ph__mark">م</span>
+              <span class="ph__text">لم تُرفع صور لهذا المشروع من لوحة التحكم بعد</span>
+            </div>
+          <% } %>
+        </div>
+
+        <% if (images.length > 1) { %>
+          <h2 class="h3" style="margin:26px 0 12px">صور المشروع</h2>
+          <div class="gallery-grid">
+            <% images.forEach(img => { %>
+              <button class="gallery-item" type="button"
+                data-lightbox
+                data-src="/uploads/<%= img.filename %>"
+                data-caption="<%= img.caption || img.alt || project.title %>">
+                <img src="/uploads/<%= img.filename %>" alt="<%= img.alt || project.title %>" loading="lazy" decoding="async">
+              </button>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <% if (project.description) { %>
+          <h2 class="h3" style="margin:30px 0 12px">وصف المشروع</h2>
+          <div class="prose"><%- S.textToHtml(project.description) %></div>
+        <% } %>
+
+        <% if (embed || videos.length) { %>
+          <h2 class="h3" style="margin:30px 0 12px">فيديو المشروع</h2>
+          <% if (videos.length) { %>
+            <div class="video-frame">
+              <video controls preload="metadata" playsinline src="/uploads/<%= videos[0].filename %>"></video>
+            </div>
+          <% } else if (embed.type === 'youtube' || embed.type === 'vimeo') { %>
+            <div class="video-frame">
+              <iframe src="<%= embed.src %>" title="فيديو <%= project.title %>" loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+          <% } else if (embed.type === 'file') { %>
+            <div class="video-frame">
+              <video controls preload="metadata" playsinline src="<%= embed.src %>"></video>
+            </div>
+          <% } else { %>
+            <p><a class="btn btn--white" href="<%= embed.src %>" target="_blank" rel="noopener">مشاهدة الفيديو ↗</a></p>
+          <% } %>
+        <% } %>
+      </div>
+
+      <aside class="stack">
+        <dl class="spec-list">
+          <% const specs = [
+            ['الموقع', project.location],
+            ['المدينة', project.city],
+            ['أنواع الوحدات', project.unit_types],
+            ['المساحة تبدأ من', project.area_from ? project.area_from + ' م²' : ''],
+            ['المساحة حتى', project.area_to ? project.area_to + ' م²' : ''],
+            ['السعر يبدأ من', project.price_from],
+            ['حالة التوافر', project.availability]
+          ].filter(row => row[1]); %>
+          <% if (specs.length) { %>
+            <% specs.forEach(row => { %>
+              <div class="spec-list__row">
+                <dt><%= row[0] %></dt>
+                <dd><%= row[1] %></dd>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="spec-list__row">
+              <dt>التفاصيل</dt>
+              <dd>لم تُدخل تفاصيل إضافية لهذا المشروع بعد</dd>
+            </div>
+          <% } %>
+        </dl>
+
+        <% if (project.map_url) { %>
+          <a class="btn btn--white" href="<%= project.map_url %>" target="_blank" rel="noopener">فتح الموقع على الخريطة ↗</a>
+        <% } %>
+
+        <div class="contact-card" style="padding:20px">
+          <h3 class="h3" style="margin-bottom:8px">استفسر عن المشروع</h3>
+          <p class="muted" style="font-size:.86rem;margin-bottom:14px"><%= settings.inquiry_intro %></p>
+          <div class="contact-quick">
+            <a href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>">
+              <span>اتصال مباشر<small dir="ltr"><%= settings.phone_display %></small></span>
+              <span aria-hidden="true">☎</span>
+            </a>
+            <a href="<%= S.whatsappLink(settings.whatsapp_number, 'استفسار عن مشروع ' + project.title) %>" target="_blank" rel="noopener">
+              <span>واتساب<small>رسالة جاهزة باسم المشروع</small></span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a href="#inquiry">
+              <span>نموذج الاستفسار<small>يُحفظ في قاعدة البيانات</small></span>
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+
+        <% if (settings.availability_note) { %>
+          <p class="muted" style="font-size:.78rem"><%= settings.availability_note %></p>
+        <% } %>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="section section--paper" id="inquiry">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">استفسار</span>
+        <h2 class="h2">اطلب تفاصيل <%= project.title %><span class="h2__bar"></span></h2>
+        <p class="lead"><%= settings.inquiry_intro %></p>
+      </div>
+    </div>
+
+    <form class="contact-card" method="post" action="/projects/<%= project.slug %>/inquiry" novalidate>
+      <% if (errors.form) { %><div class="toast toast--err" style="margin-bottom:16px"><span class="toast__icon">!</span><span><%= errors.form %></span></div><% } %>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="field <%= errors.name ? 'has-error' : '' %>">
+            <label for="p-name">الاسم</label>
+            <input class="input" id="p-name" name="name" type="text" value="<%= old.name || '' %>" required maxlength="120" autocomplete="name">
+            <% if (errors.name) { %><span class="err"><%= errors.name %></span><% } %>
+          </div>
+          <div class="field <%= errors.phone ? 'has-error' : '' %>">
+            <label for="p-phone">رقم الهاتف</label>
+            <input class="input" id="p-phone" name="phone" type="tel" value="<%= old.phone || '' %>" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx">
+            <% if (errors.phone) { %><span class="err"><%= errors.phone %></span><% } %>
+          </div>
+        </div>
+        <div class="field <%= errors.message ? 'has-error' : '' %>">
+          <label for="p-message">رسالتك</label>
+          <textarea class="textarea" id="p-message" name="message" required maxlength="3000" placeholder="اكتب ما تريد معرفته عن المشروع"><%= old.message || '' %></textarea>
+          <% if (errors.message) { %><span class="err"><%= errors.message %></span><% } %>
+        </div>
+        <div class="honeypot" aria-hidden="true">
+          <label for="p-website">اتركه فارغًا</label>
+          <input id="p-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <div>
+          <button class="btn" type="submit">إرسال الطلب</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<% if (related.length) { %>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">مشروعات أخرى</span>
+        <h2 class="h2">قد يهمك أيضًا<span class="h2__bar"></span></h2>
+      </div>
+      <a class="btn btn--white" href="/projects">كل المشروعات</a>
+    </div>
+    <div class="grid grid--3">
+      <% related.forEach(item => { %>
+        <%- include('partials/project-card', { project: item }) %>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('partials/foot') %>
