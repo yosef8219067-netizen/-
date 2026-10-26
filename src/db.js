@@ -220,16 +220,10 @@ const DEFAULT_SETTINGS = {
 };
 
 function seedSettings() {
-  const insert = db.prepare('INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES (?, ?, ?)');
   const ts = now();
   for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
-    try {
-      insert.run([key, value, ts]);
-    } finally {
-      /* statement يُستخدم مرة أخرى */
-    }
+    run('INSERT OR IGNORE INTO settings (key, value, updated_at) VALUES (?, ?, ?)', [key, value, ts]);
   }
-  insert.finalize();
 }
 
 function seedServices() {
