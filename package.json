@@ -1,23 +1,19 @@
 {
-  "name": "-",
+  "name": "marasi-capital-website",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yosef8219067-netizen/-.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
+  "description": "موقع شركة مراسي العاصمة الحديثة — منصة عقارية عربية مع لوحة تحكم إدارية",
+  "main": "server.js",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/yosef8219067-netizen/-/issues"
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node tests/e2e.js",
+    "check": "node --check server.js && node --check src/db.js && node --check src/auth.js && node --check src/lib/util.js && node --check src/routes/public.js && node --check src/routes/admin.js"
   },
-  "homepage": "https://github.com/yosef8219067-netizen/-#readme",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "ejs": "^7.0.2",
