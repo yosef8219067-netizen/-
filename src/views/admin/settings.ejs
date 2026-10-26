@@ -1,0 +1,245 @@
+<%- include('../partials/admin-head') %>
+
+<form method="post" action="/admin/settings" enctype="multipart/form-data" class="form-grid">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <div class="panel">
+    <div class="panel__head"><h2>هوية الشركة والتواصل</h2></div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="company_name">اسم الشركة</label>
+          <input class="input" id="company_name" name="company_name" type="text" value="<%= values.company_name %>" maxlength="160">
+        </div>
+        <div class="field">
+          <label for="owner_name">المسؤول / المالك</label>
+          <input class="input" id="owner_name" name="owner_name" type="text" value="<%= values.owner_name %>" maxlength="120">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="tagline">الشعار النصي</label>
+        <input class="input" id="tagline" name="tagline" type="text" value="<%= values.tagline %>" maxlength="200">
+      </div>
+
+      <div class="form-grid form-grid--3">
+        <div class="field">
+          <label for="phone_display">رقم الهاتف (للعرض)</label>
+          <input class="input" id="phone_display" name="phone_display" type="text" value="<%= values.phone_display %>" maxlength="40">
+        </div>
+        <div class="field">
+          <label for="phone_intl">الهاتف بالصيغة الدولية</label>
+          <input class="input" id="phone_intl" name="phone_intl" type="text" value="<%= values.phone_intl %>" maxlength="24" dir="ltr" placeholder="+201092877921">
+          <span class="hint">يُستخدم في رابط الاتصال tel:.</span>
+        </div>
+        <div class="field">
+          <label for="whatsapp_number">رقم واتساب</label>
+          <input class="input" id="whatsapp_number" name="whatsapp_number" type="text" value="<%= values.whatsapp_number %>" maxlength="24" dir="ltr" placeholder="201092877921">
+          <span class="hint">أرقام فقط مع كود الدولة بدون +.</span>
+        </div>
+      </div>
+
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="email">البريد الإلكتروني</label>
+          <input class="input" id="email" name="email" type="email" value="<%= values.email %>" maxlength="180" dir="ltr">
+          <span class="hint">اتركه فارغًا إذا لم يكن لديك بريد رسمي — لن يُعرض للزوار.</span>
+        </div>
+        <div class="field">
+          <label for="address">العنوان</label>
+          <input class="input" id="address" name="address" type="text" value="<%= values.address %>" maxlength="240">
+        </div>
+      </div>
+
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="working_hours">مواعيد العمل</label>
+          <input class="input" id="working_hours" name="working_hours" type="text" value="<%= values.working_hours %>" maxlength="160">
+        </div>
+        <div class="field">
+          <label for="logo">شعار الشركة (صورة)</label>
+          <input class="input input--file" id="logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" data-preview-target="#logo-preview">
+          <div id="logo-preview" class="preview-strip"><% if (values.logo_path) { %><img src="/uploads/<%= values.logo_path %>" alt="شعار الشركة الحالي"><% } %></div>
+        </div>
+      </div>
+
+      <div class="helper">
+        الحقول الفارغة لا تظهر للزوار. رقم الهاتف وروابط الاتصال والواتساب تعمل مباشرة من كل صفحة عامة.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>الصفحة الرئيسية</h2></div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="hero_badge">شارة القسم الافتتاحي</label>
+          <input class="input" id="hero_badge" name="hero_badge" type="text" value="<%= values.hero_badge %>" maxlength="80">
+        </div>
+        <div class="field">
+          <label for="hero_title">عنوان القسم الافتتاحي</label>
+          <input class="input" id="hero_title" name="hero_title" type="text" value="<%= values.hero_title %>" maxlength="200">
+        </div>
+      </div>
+      <div class="field">
+        <label for="hero_subtitle">نص القسم الافتتاحي</label>
+        <textarea class="textarea" id="hero_subtitle" name="hero_subtitle" maxlength="800"><%= values.hero_subtitle %></textarea>
+      </div>
+      <div class="field">
+        <label for="about_short">نبذة مختصرة (تظهر في الرئيسية وصفحة عن الشركة)</label>
+        <textarea class="textarea" id="about_short" name="about_short" maxlength="1200"><%= values.about_short %></textarea>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="home_projects_count">عدد المشروعات في الرئيسية</label>
+          <input class="input" id="home_projects_count" name="home_projects_count" type="number" min="1" max="12" value="<%= values.home_projects_count %>">
+        </div>
+        <div class="field">
+          <label for="home_gallery_count">عدد صور المعرض في الرئيسية</label>
+          <input class="input" id="home_gallery_count" name="home_gallery_count" type="number" min="0" max="24" value="<%= values.home_gallery_count %>">
+        </div>
+      </div>
+      <div class="field">
+        <label class="check">
+          <input type="checkbox" name="show_team_section" value="1" <%- String(values.show_team_section) === '1' ? 'checked' : '' %>>
+          إظهار قسم فريق العمل في الموقع (لن يظهر أي عضو بدون بيانات وصورة)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>عن الشركة</h2></div>
+    <div class="panel__body">
+      <div class="field">
+        <label for="about_story">قصة الشركة / نبذة تفصيلية</label>
+        <textarea class="textarea" id="about_story" name="about_story" maxlength="6000"><%= values.about_story %></textarea>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="vision">الرؤية</label>
+          <textarea class="textarea" id="vision" name="vision" maxlength="2000"><%= values.vision %></textarea>
+        </div>
+        <div class="field">
+          <label for="mission">الرسالة</label>
+          <textarea class="textarea" id="mission" name="mission" maxlength="2000"><%= values.mission %></textarea>
+        </div>
+      </div>
+      <div class="field">
+        <label for="availability_note">ملاحظة عامة عن التوافر والأسعار</label>
+        <input class="input" id="availability_note" name="availability_note" type="text" value="<%= values.availability_note %>" maxlength="300">
+        <span class="hint">مثال: الأسعار والمساحات تُحدَّث من إدارة الشركة، ويُرجى التأكد هاتفيًا قبل التعاقد.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>البيانات الرسمية</h2></div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="commercial_register">السجل التجاري</label>
+          <input class="input" id="commercial_register" name="commercial_register" type="text" value="<%= values.commercial_register %>" maxlength="80">
+        </div>
+        <div class="field">
+          <label for="tax_id">البطاقة الضريبية</label>
+          <input class="input" id="tax_id" name="tax_id" type="text" value="<%= values.tax_id %>" maxlength="80">
+        </div>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="license_no">رقم الترخيص</label>
+          <input class="input" id="license_no" name="license_no" type="text" value="<%= values.license_no %>" maxlength="80">
+        </div>
+        <div class="field">
+          <label for="official_notes">ملاحظات رسمية</label>
+          <input class="input" id="official_notes" name="official_notes" type="text" value="<%= values.official_notes %>" maxlength="400">
+        </div>
+      </div>
+      <div class="helper">
+        لا تُعرض هذه البيانات للزوار إلا بعد إدخالها هنا. لم نضع أي أرقام رسمية مفترضة داخل المشروع.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>روابط التواصل الاجتماعي</h2></div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="facebook_url">فيسبوك</label>
+          <input class="input" id="facebook_url" name="facebook_url" type="url" value="<%= values.facebook_url %>" maxlength="400" dir="ltr">
+        </div>
+        <div class="field">
+          <label for="instagram_url">إنستجرام</label>
+          <input class="input" id="instagram_url" name="instagram_url" type="url" value="<%= values.instagram_url %>" maxlength="400" dir="ltr">
+        </div>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="tiktok_url">تيك توك</label>
+          <input class="input" id="tiktok_url" name="tiktok_url" type="url" value="<%= values.tiktok_url %>" maxlength="400" dir="ltr">
+        </div>
+        <div class="field">
+          <label for="linkedin_url">لينكدإن</label>
+          <input class="input" id="linkedin_url" name="linkedin_url" type="url" value="<%= values.linkedin_url %>" maxlength="400" dir="ltr">
+        </div>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="youtube_url">يوتيوب</label>
+          <input class="input" id="youtube_url" name="youtube_url" type="url" value="<%= values.youtube_url %>" maxlength="400" dir="ltr">
+        </div>
+        <div class="field">
+          <label for="whatsapp_group_url">رابط مجموعة واتساب</label>
+          <input class="input" id="whatsapp_group_url" name="whatsapp_group_url" type="url" value="<%= values.whatsapp_group_url %>" maxlength="400" dir="ltr">
+        </div>
+      </div>
+      <div class="helper">تُقبل روابط https فقط. أي رابط غير صالح يُحفظ فارغًا ولا يظهر للزوار.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>SEO والتذييل</h2></div>
+    <div class="panel__body">
+      <div class="field">
+        <label for="seo_title">عنوان SEO للصفحة الرئيسية</label>
+        <input class="input" id="seo_title" name="seo_title" type="text" value="<%= values.seo_title %>" maxlength="200">
+      </div>
+      <div class="field">
+        <label for="seo_description">وصف SEO</label>
+        <textarea class="textarea" id="seo_description" name="seo_description" maxlength="320"><%= values.seo_description %></textarea>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="seo_keywords">كلمات مفتاحية</label>
+          <input class="input" id="seo_keywords" name="seo_keywords" type="text" value="<%= values.seo_keywords %>" maxlength="300">
+        </div>
+        <div class="field">
+          <label for="site_base_url">رابط الموقع الأساسي</label>
+          <input class="input" id="site_base_url" name="site_base_url" type="url" value="<%= values.site_base_url %>" maxlength="300" dir="ltr" placeholder="https://example.com">
+          <span class="hint">يُستخدم في sitemap والروابط الأساسية. اتركه فارغًا لاستخدام رابط الطلب الحالي.</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="footer_note">ملاحظة التذييل</label>
+        <input class="input" id="footer_note" name="footer_note" type="text" value="<%= values.footer_note %>" maxlength="400">
+      </div>
+      <div class="field">
+        <label for="inquiry_intro">نص تمهيدي لنموذج التواصل</label>
+        <input class="input" id="inquiry_intro" name="inquiry_intro" type="text" value="<%= values.inquiry_intro %>" maxlength="400">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__foot">
+      <button class="btn" type="submit">حفظ الإعدادات</button>
+      <a class="btn btn--white" href="/admin">رجوع</a>
+      <span class="cell-sub">التغييرات تظهر على الموقع العام فورًا.</span>
+    </div>
+  </div>
+</form>
+
+<%- include('../partials/admin-foot') %>
