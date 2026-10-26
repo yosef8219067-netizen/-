@@ -1,0 +1,100 @@
+<%- include('partials/head') %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><span>تواصل معنا</span>
+    </nav>
+    <h1>تواصل معنا</h1>
+    <p><%= settings.inquiry_intro %></p>
+  </div>
+</section>
+
+<section class="section section--tight" id="inquiry">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="stack">
+        <div class="contact-card">
+          <h2 class="h3" style="margin-bottom:10px">بيانات التواصل</h2>
+          <div class="contact-quick">
+            <a href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>">
+              <span>اتصال هاتفي مباشر<small dir="ltr"><%= settings.phone_display %></small></span>
+              <span aria-hidden="true">☎</span>
+            </a>
+            <a href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener">
+              <span>واتساب<small>يفتح محادثة برقم الشركة</small></span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            <% if (settings.email) { %>
+              <a href="mailto:<%= settings.email %>">
+                <span>البريد الإلكتروني<small><%= settings.email %></small></span>
+                <span aria-hidden="true">✉</span>
+              </a>
+            <% } %>
+          </div>
+
+          <dl class="spec-list" style="margin-top:16px">
+            <% if (settings.owner_name) { %>
+              <div class="spec-list__row"><dt>المسؤول</dt><dd><%= settings.owner_name %></dd></div>
+            <% } %>
+            <% if (settings.address) { %>
+              <div class="spec-list__row"><dt>العنوان</dt><dd><%= settings.address %></dd></div>
+            <% } %>
+            <% if (settings.working_hours) { %>
+              <div class="spec-list__row"><dt>مواعيد العمل</dt><dd><%= settings.working_hours %></dd></div>
+            <% } %>
+            <div class="spec-list__row"><dt>الشركة</dt><dd><%= settings.company_name %></dd></div>
+          </dl>
+
+          <p class="muted" style="margin-top:12px;font-size:.8rem">
+            البريد الإلكتروني والعنوان ومواعيد العمل تظهر فقط بعد إدخالها من لوحة التحكم.
+          </p>
+        </div>
+      </div>
+
+      <form class="contact-card" method="post" action="/contact" novalidate>
+        <h2 class="h3" style="margin-bottom:6px">أرسل رسالتك</h2>
+        <p class="muted" style="font-size:.86rem;margin-bottom:16px">
+          تُحفظ الرسالة في قاعدة بيانات الموقع ويُراجعها فريق الشركة من لوحة التحكم.
+        </p>
+
+        <% if (errors.form) { %>
+          <div class="toast toast--err" style="margin-bottom:14px"><span class="toast__icon">!</span><span><%= errors.form %></span></div>
+        <% } %>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field <%= errors.name ? 'has-error' : '' %>">
+              <label for="c-name">الاسم</label>
+              <input class="input" id="c-name" name="name" type="text" value="<%= old.name || '' %>" required maxlength="120" autocomplete="name">
+              <% if (errors.name) { %><span class="err"><%= errors.name %></span><% } %>
+            </div>
+            <div class="field <%= errors.phone ? 'has-error' : '' %>">
+              <label for="c-phone">رقم الهاتف</label>
+              <input class="input" id="c-phone" name="phone" type="tel" value="<%= old.phone || '' %>" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx">
+              <% if (errors.phone) { %><span class="err"><%= errors.phone %></span><% } %>
+            </div>
+          </div>
+
+          <div class="field <%= errors.message ? 'has-error' : '' %>">
+            <label for="c-message">الرسالة</label>
+            <textarea class="textarea" id="c-message" name="message" required maxlength="3000" placeholder="اكتب استفسارك بالتفصيل"><%= old.message || '' %></textarea>
+            <% if (errors.message) { %><span class="err"><%= errors.message %></span><% } %>
+          </div>
+
+          <div class="honeypot" aria-hidden="true">
+            <label for="c-website">اتركه فارغًا</label>
+            <input id="c-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" type="submit">إرسال الرسالة</button>
+            <a class="btn btn--white" href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener">أو راسلنا على واتساب</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>
