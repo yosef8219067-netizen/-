@@ -1,0 +1,135 @@
+<%- include('partials/head') %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><span>عن الشركة</span>
+    </nav>
+    <h1>عن <%= settings.company_name %></h1>
+    <p><%= settings.about_short %></p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="grid grid--2" style="align-items:start">
+      <div>
+        <span class="eyebrow">نبذة</span>
+        <h2 class="h2" style="margin-bottom:20px"><%= settings.company_name %><span class="h2__bar"></span></h2>
+        <div class="prose">
+          <%- S.textToHtml(settings.about_story) %>
+        </div>
+      </div>
+
+      <aside class="contact-card">
+        <h3 class="h3" style="margin-bottom:12px">بيانات التواصل</h3>
+        <dl class="spec-list">
+          <div class="spec-list__row">
+            <dt>الهاتف</dt>
+            <dd dir="ltr"><%= settings.phone_display %></dd>
+          </div>
+          <div class="spec-list__row">
+            <dt>واتساب</dt>
+            <dd><a href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener" style="border-bottom:3px solid var(--gold)">راسلنا مباشرة</a></dd>
+          </div>
+          <% if (settings.owner_name) { %>
+          <div class="spec-list__row">
+            <dt>المسؤول</dt>
+            <dd><%= settings.owner_name %></dd>
+          </div>
+          <% } %>
+          <% if (settings.email) { %>
+          <div class="spec-list__row">
+            <dt>البريد الإلكتروني</dt>
+            <dd><a href="mailto:<%= settings.email %>"><%= settings.email %></a></dd>
+          </div>
+          <% } %>
+          <% if (settings.address) { %>
+          <div class="spec-list__row">
+            <dt>العنوان</dt>
+            <dd><%= settings.address %></dd>
+          </div>
+          <% } %>
+          <% if (settings.working_hours) { %>
+          <div class="spec-list__row">
+            <dt>مواعيد العمل</dt>
+            <dd><%= settings.working_hours %></dd>
+          </div>
+          <% } %>
+        </dl>
+        <p class="muted" style="margin-top:12px;font-size:.82rem">
+          الحقول غير المتوفرة لا تُعرض هنا. تُضاف البيانات الرسمية (السجل التجاري/الترخيص) من لوحة التحكم بعد التحقق منها.
+        </p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<% if (settings.vision || settings.mission) { %>
+<section class="section section--paper">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">الهوية</span>
+        <h2 class="h2">الرؤية والرسالة<span class="h2__bar"></span></h2>
+      </div>
+    </div>
+    <div class="grid grid--2">
+      <% if (settings.vision) { %>
+      <article class="service">
+        <span class="service__num">01</span>
+        <h3 class="service__title">الرؤية</h3>
+        <p class="service__desc"><%= settings.vision %></p>
+      </article>
+      <% } %>
+      <% if (settings.mission) { %>
+      <article class="service">
+        <span class="service__num">02</span>
+        <h3 class="service__title">الرسالة</h3>
+        <p class="service__desc"><%= settings.mission %></p>
+      </article>
+      <% } %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head__text">
+        <span class="eyebrow">مبادئ العمل</span>
+        <h2 class="h2">ما يمكنك الاعتماد عليه<span class="h2__bar"></span></h2>
+      </div>
+    </div>
+    <div class="grid grid--3">
+      <div class="feature">
+        <div class="feature__title">شفافية في العرض</div>
+        <p class="feature__text">المعلومات المعروضة على الموقع هي ما تم إدخاله فعليًا لكل مشروع، دون إضافات غير مؤكدة.</p>
+      </div>
+      <div class="feature">
+        <div class="feature__title">لا أرقام مُفترضة</div>
+        <p class="feature__text">لا نعرض إنجازات أو أعدادًا أو شهادات لم تصدر عن الشركة.</p>
+      </div>
+      <div class="feature">
+        <div class="feature__title">تواصل بشري</div>
+        <p class="feature__text">كل استفسار يُحفظ ويُراجع من فريق الشركة، ويتم الرد على الرقم الذي يتركه العميل.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap cta-band__inner">
+    <div>
+      <h2>لديك سؤال قبل اتخاذ قرار؟</h2>
+      <p style="margin-top:10px;color:#c7d2e4">اتصل بنا على <span dir="ltr"><%= settings.phone_display %></span> أو أرسل رسالة من صفحة التواصل.</p>
+    </div>
+    <div class="cta-band__actions">
+      <a class="btn" href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>">اتصل الآن</a>
+      <a class="btn btn--white" href="/contact">نموذج التواصل</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

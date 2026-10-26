@@ -1,0 +1,73 @@
+<%- include('partials/head') %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><span>المشروعات</span>
+    </nav>
+    <h1>مشروعاتنا</h1>
+    <p>
+      <%
+        const activeFilters = (q ? 1 : 0) + (city ? 1 : 0);
+      %>
+      <%= ar(total) %> مشروع منشور<%- activeFilters ? ' — نتائج البحث' : '' %>.
+      كل البيانات والصور تُدار من لوحة التحكم وتظهر هنا مباشرة بعد النشر.
+    </p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <form class="filters" action="/projects" method="get" role="search" style="margin-bottom:26px">
+      <div class="field" style="flex:1 1 260px">
+        <label for="q">بحث</label>
+        <input class="input" type="search" id="q" name="q" value="<%= q %>" placeholder="اسم المشروع أو الموقع أو نوع الوحدة">
+      </div>
+      <% if (cities.length) { %>
+      <div class="field" style="flex:0 1 200px">
+        <label for="city">المدينة</label>
+        <select class="select" id="city" name="city">
+          <option value="">كل المدن</option>
+          <% cities.forEach(c => { %>
+            <option value="<%= c %>" <%- city === c ? 'selected' : '' %>><%= c %></option>
+          <% }); %>
+        </select>
+      </div>
+      <% } %>
+      <button class="btn" type="submit">تطبيق</button>
+      <% if (activeFilters) { %><a class="btn btn--white" href="/projects">إلغاء</a><% } %>
+    </form>
+
+    <% if (projects.length) { %>
+      <div class="grid grid--3">
+        <% projects.forEach(project => { %>
+          <%- include('partials/project-card', { project }) %>
+        <% }); %>
+      </div>
+
+      <% if (pages > 1) { %>
+        <nav class="pagination" style="margin-top:28px" aria-label="ترقيم الصفحات">
+          <% for (let p = 1; p <= pages; p++) { %>
+            <% if (p === page) { %>
+              <span aria-current="true"><%= ar(p) %></span>
+            <% } else { %>
+              <a href="/projects?page=<%= p %><%= q ? '&q=' + encodeURIComponent(q) : '' %><%= city ? '&city=' + encodeURIComponent(city) : '' %>"><%= ar(p) %></a>
+            <% } %>
+          <% } %>
+        </nav>
+      <% } %>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty__title"><%= activeFilters ? 'لا توجد نتائج مطابقة' : 'لا توجد مشروعات منشورة بعد' %></div>
+        <p class="empty__text">
+          <%= activeFilters ? 'جرّب كلمة بحث أخرى أو ألغِ التصفية.' : 'تظهر هنا المشروعات التي تُنشر من لوحة التحكم فقط، ولا تُعرض بيانات أو صور تجريبية.' %>
+        </p>
+        <% if (activeFilters) { %>
+          <a class="btn btn--navy" href="/projects">عرض كل المشروعات</a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/foot') %>
