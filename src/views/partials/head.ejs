@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <meta name="description" content="<%= (typeof metaDescription !== 'undefined' && metaDescription) ? metaDescription : settings.seo_description %>">
+  <meta name="keywords" content="<%= settings.seo_keywords %>">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a1a38">
+  <% if (typeof canonical !== 'undefined' && canonical) { %>
+  <link rel="canonical" href="<%= canonical %>">
+  <% } %>
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= settings.company_name %>">
+  <meta property="og:locale" content="ar_EG">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= (typeof metaDescription !== 'undefined' && metaDescription) ? metaDescription : settings.seo_description %>">
+  <% if (typeof canonical !== 'undefined' && canonical) { %>
+  <meta property="og:url" content="<%= canonical %>">
+  <% } %>
+  <% if (typeof ogImage !== 'undefined' && ogImage) { %>
+  <meta property="og:image" content="<%= baseUrl %><%= ogImage %>">
+  <meta name="twitter:image" content="<%= baseUrl %><%= ogImage %>">
+  <% } %>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= title %>">
+  <meta name="twitter:description" content="<%= (typeof metaDescription !== 'undefined' && metaDescription) ? metaDescription : settings.seo_description %>">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": <%= JSON.stringify(settings.company_name) %>,
+    "url": <%= JSON.stringify(baseUrl) %>,
+    "telephone": <%= JSON.stringify(settings.phone_intl || settings.phone_display) %>
+    <%- (settings.email ? `, "email": ${JSON.stringify(settings.email)}` : '') %>
+    <%- (settings.address ? `, "address": ${JSON.stringify(settings.address)}` : '') %>
+    <%- (() => {
+      const socials = [settings.facebook_url, settings.instagram_url, settings.tiktok_url, settings.linkedin_url, settings.youtube_url].filter(Boolean);
+      return socials.length ? `, "sameAs": ${JSON.stringify(socials)}` : '';
+    })() %>
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">تجاوز إلى المحتوى الرئيسي</a>
+
+<% const mainNav = [
+  { href: '/', label: 'الرئيسية' },
+  { href: '/projects', label: 'المشروعات' },
+  { href: '/services', label: 'الخدمات' },
+  { href: '/gallery', label: 'المعرض' },
+  { href: '/about', label: 'عن الشركة' },
+  { href: '/team', label: 'فريق العمل' },
+  { href: '/contact', label: 'تواصل معنا' }
+]; %>
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/" aria-label="<%= settings.company_name %> — الصفحة الرئيسية">
+      <span class="brand__mark" aria-hidden="true"><%= settings.logo_path ? '■' : 'م' %></span>
+      <span class="brand__text">
+        <span class="brand__name"><%= settings.company_name %></span>
+        <span class="brand__sub"><%= settings.tagline %></span>
+      </span>
+    </a>
+
+    <nav class="nav" id="mainNav" aria-label="القائمة الرئيسية">
+      <% mainNav.forEach(item => { %>
+        <a href="<%= item.href %>" <%- path === item.href ? 'aria-current="page"' : '' %>><%= item.label %></a>
+      <% }); %>
+    </nav>
+
+    <div class="header-actions">
+      <a class="btn btn--white" href="<%= S.whatsappLink(settings.whatsapp_number, 'مرحبًا، أريد الاستفسار عن مشروعات ' + settings.company_name) %>" target="_blank" rel="noopener">
+        واتساب
+      </a>
+      <a class="btn" href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 0 0 6 6L15 14l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg>
+        <span style="direction:ltr"><%= settings.phone_display %></span>
+      </a>
+      <button class="menu-toggle" type="button" id="menuToggle" aria-expanded="false" aria-controls="mainNav" aria-label="فتح القائمة">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<%- include('toast') %>
+
+<main id="main">

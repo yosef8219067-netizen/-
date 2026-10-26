@@ -1,0 +1,8 @@
+<% if (message) { %>
+<div class="wrap">
+  <div class="toast <%= message.type === 'err' ? 'toast--err' : '' %>" role="<%= message.type === 'err' ? 'alert' : 'status' %>">
+    <span class="toast__icon" aria-hidden="true"><%= message.type === 'err' ? '✕' : '✓' %></span>
+    <span><%= message.text %></span>
+  </div>
+</div>
+<% } %>
