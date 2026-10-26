@@ -1,0 +1,9 @@
+<% const nextStatus = p.status === 'published' ? 'draft' : 'published'; %>
+<form method="post" action="/admin/projects/<%= p.id %>/status">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <input type="hidden" name="status" value="<%= nextStatus %>">
+  <input type="hidden" name="return_to" value="<%= typeof returnTo !== 'undefined' ? returnTo : '/admin/projects' %>">
+  <button class="btn btn--sm <%= p.status === 'published' ? 'btn--white' : '' %>" type="submit">
+    <%= p.status === 'published' ? 'إلغاء النشر' : 'نشر' %>
+  </button>
+</form>

@@ -1,0 +1,105 @@
+<%- include('../partials/admin-head') %>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>المشروعات (<%= ar(total) %>)</h2>
+    <a class="btn btn--sm" href="/admin/projects/new">+ مشروع جديد</a>
+  </div>
+  <div class="panel__body">
+    <form class="filters" method="get" action="/admin/projects">
+      <div class="field" style="flex:1 1 240px">
+        <label for="q">بحث</label>
+        <input class="input" id="q" name="q" type="search" value="<%= q %>" placeholder="اسم المشروع / الموقع / الرابط">
+      </div>
+      <div class="field">
+        <label for="status">الحالة</label>
+        <select class="select" id="status" name="status">
+          <option value="">الكل</option>
+          <option value="published" <%- status === 'published' ? 'selected' : '' %>>منشور</option>
+          <option value="draft" <%- status === 'draft' ? 'selected' : '' %>>مسودة</option>
+          <option value="archived" <%- status === 'archived' ? 'selected' : '' %>>مؤرشف</option>
+        </select>
+      </div>
+      <button class="btn btn--white" type="submit">تصفية</button>
+      <% if (q || status) { %><a class="btn btn--white" href="/admin/projects">إلغاء</a><% } %>
+    </form>
+  </div>
+</div>
+
+<% if (projects.length) { %>
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>الصورة</th>
+          <th>المشروع</th>
+          <th>الموقع</th>
+          <th>الحالة</th>
+          <th>مميز</th>
+          <th>الوسائط</th>
+          <th>آخر تحديث</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% projects.forEach(p => { %>
+          <tr>
+            <td>
+              <% if (p.primary_image) { %>
+                <img class="thumb" src="/uploads/<%= p.primary_image %>" alt="<%= p.title %>" loading="lazy">
+              <% } else { %>
+                <span class="thumb thumb--empty">بدون صورة</span>
+              <% } %>
+            </td>
+            <td>
+              <div class="cell-title"><%= p.title %></div>
+              <div class="cell-sub" dir="ltr">/projects/<%= p.slug %></div>
+            </td>
+            <td class="cell-sub"><%= p.city || p.location || '—' %></td>
+            <td><span class="chip chip--<%= p.status %>"><%= PROJECT_STATUS[p.status] || p.status %></span></td>
+            <td><%= p.is_featured ? '★' : '—' %></td>
+            <td class="mono-num"><%= ar(p.media_count) %></td>
+            <td class="cell-sub"><%= ago(p.updated_at) %></td>
+            <td>
+              <div class="btn-row">
+                <a class="btn btn--sm btn--white" href="/admin/projects/<%= p.id %>/edit">تعديل</a>
+                <a class="btn btn--sm btn--white" href="/admin/projects/<%= p.id %>/media">صور</a>
+                <a class="btn btn--sm btn--white" href="/admin/projects/<%= p.id %>/preview" target="_blank" rel="noopener">معاينة</a>
+                <%- include('partials/status-form', { p }) %>
+                <% if (p.status === 'published') { %>
+                  <a class="btn btn--sm btn--white" href="/projects/<%= p.slug %>" target="_blank" rel="noopener">على الموقع ↗</a>
+                <% } %>
+                <form method="post" action="/admin/projects/<%= p.id %>/delete" data-confirm="سيتم حذف المشروع وكل صوره نهائيًا. هل تريد المتابعة؟">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <input type="hidden" name="confirm" value="1">
+                  <input type="hidden" name="return_to" value="/admin/projects">
+                  <button class="btn btn--sm btn--danger" type="submit">حذف</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if (pages > 1) { %>
+    <nav class="pagination" aria-label="ترقيم الصفحات">
+      <% for (let i = 1; i <= pages; i++) { %>
+        <% if (i === page) { %>
+          <span aria-current="true"><%= ar(i) %></span>
+        <% } else { %>
+          <a href="/admin/projects?page=<%= i %><%= q ? '&q=' + encodeURIComponent(q) : '' %><%= status ? '&status=' + status : '' %>"><%= ar(i) %></a>
+        <% } %>
+      <% } %>
+    </nav>
+  <% } %>
+<% } else { %>
+  <div class="empty-state">
+    <h3><%= q || status ? 'لا توجد نتائج مطابقة' : 'لا توجد مشروعات بعد' %></h3>
+    <p><%= q || status ? 'جرّب تغيير كلمة البحث أو إلغاء التصفية.' : 'أضف أول مشروع، ارفع صوره الحقيقية، ثم انشره ليظهر على الموقع.' %></p>
+    <a class="btn" href="/admin/projects/new">+ إضافة مشروع</a>
+  </div>
+<% } %>
+
+<%- include('../partials/admin-foot') %>
