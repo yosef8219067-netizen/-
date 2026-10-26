@@ -178,8 +178,17 @@ const ROLE_LABEL = {
 const MEDIA_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
 const MEDIA_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 
+/** حجم الملف بصيغة مقروءة (عربي) */
+function formatBytes(bytes) {
+  const n = Number(bytes) || 0;
+  if (n < 1024) return `${n} بايت`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} ك.ب`;
+  return `${(n / (1024 * 1024)).toFixed(1)} م.ب`;
+}
+
 module.exports = {
   escapeHtml,
+  formatBytes,
   textToHtml,
   str,
   multiline,

@@ -12,6 +12,7 @@ const compression = require('compression');
 const { UPLOAD_DIR, DB_FILE, DATA_DIR, getSettings } = require('./src/db');
 const { attachSession, bootstrapFromEnv } = require('./src/auth');
 const { getMessage } = require('./src/lib/flash');
+const { IMAGE_MAX, VIDEO_MAX } = require('./src/lib/upload');
 const publicRoutes = require('./src/routes/public');
 const adminRoutes = require('./src/routes/admin');
 const util = require('./src/lib/util');
@@ -71,6 +72,9 @@ app.use((req, res, next) => {
   res.locals.PROJECT_STATUS = util.PROJECT_STATUS;
   res.locals.INQUIRY_STATUS = util.INQUIRY_STATUS;
   res.locals.ROLE_LABEL = util.ROLE_LABEL;
+  res.locals.kb = util.formatBytes;
+  res.locals.maxImageMb = Math.round(IMAGE_MAX / (1024 * 1024));
+  res.locals.maxVideoMb = Math.round(VIDEO_MAX / (1024 * 1024));
   res.locals.adminSection = '';
   next();
 });
