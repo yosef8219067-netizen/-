@@ -441,7 +441,7 @@ router.post('/projects/:id/status', (req, res) => {
   const status = ['draft', 'published', 'archived'].includes(req.body.status) ? req.body.status : 'draft';
   run('UPDATE projects SET status = ?, updated_at = ? WHERE id = ?', [status, now(), id]);
   logActivity({ userId: req.user.id, userName: req.user.name, action: 'project_status', entity: 'project', entityId: id, details: `${project.title} → ${status}` });
-  return redirectWith(res, U.str(req.body.return_to, 300) || '/admin/projects', 'status_changed');
+  return redirectWith(res, safeBack(req, '/admin/projects'), 'status_changed');
 });
 
 router.post('/projects/:id/delete', (req, res) => {
@@ -597,7 +597,7 @@ router.post('/media/:id/primary', (req, res) => {
   run("UPDATE media SET is_primary = 0 WHERE project_id IS ? AND kind = 'image'", [item.project_id]);
   run('UPDATE media SET is_primary = 1 WHERE id = ?', [id]);
   logActivity({ userId: req.user.id, userName: req.user.name, action: 'media_primary', entity: 'media', entityId: id, details: item.filename });
-  return redirectWith(res, U.str(req.body.return_to, 300) || '/admin/media', 'primary_set');
+  return redirectWith(res, safeBack(req, '/admin/media'), 'primary_set');
 });
 
 router.post('/media/:id/move', (req, res) => {
@@ -615,7 +615,7 @@ router.post('/media/:id/move', (req, res) => {
     reordered[target] = tmp;
     reordered.forEach((row, i) => run('UPDATE media SET sort_order = ? WHERE id = ?', [i + 1, row.id]));
   }
-  return redirectWith(res, U.str(req.body.return_to, 300) || '/admin/media', 'media_moved');
+  return redirectWith(res, safeBack(req, '/admin/media'), 'media_moved');
 });
 
 router.post('/media/:id/update', (req, res) => {
@@ -623,7 +623,7 @@ router.post('/media/:id/update', (req, res) => {
   const item = get('SELECT * FROM media WHERE id = ?', [id]);
   if (!item) return redirectWith(res, '/admin/media', 'not_found');
   run('UPDATE media SET alt = ?, caption = ? WHERE id = ?', [U.str(req.body.alt, 200), U.str(req.body.caption, 250), id]);
-  return redirectWith(res, U.str(req.body.return_to, 300) || '/admin/media', 'media_updated');
+  return redirectWith(res, safeBack(req, '/admin/media'), 'media_updated');
 });
 
 router.post('/media/:id/delete', (req, res) => {
@@ -640,7 +640,7 @@ router.post('/media/:id/delete', (req, res) => {
     }
   }
   logActivity({ userId: req.user.id, userName: req.user.name, action: 'media_deleted', entity: 'media', entityId: id, details: item.filename });
-  return redirectWith(res, U.str(req.body.return_to, 300) || '/admin/media', 'media_deleted');
+  return redirectWith(res, safeBack(req, '/admin/media'), 'media_deleted');
 });
 
 /* ------------------------------ طلبات العملاء ------------------------------ */
@@ -692,7 +692,7 @@ router.post('/inquiries/:id', (req, res) => {
   const status = ['new', 'in_progress', 'done'].includes(req.body.status) ? req.body.status : inquiry.status;
   run('UPDATE inquiries SET status = ?, admin_notes = ?, updated_at = ? WHERE id = ?', [status, U.multiline(req.body.admin_notes, 4000), now(), id]);
   logActivity({ userId: req.user.id, userName: req.user.name, action: 'inquiry_updated', entity: 'inquiry', entityId: id, details: status });
-  return redirectWith(res, U.str(req.body.return_to, 300) || `/admin/inquiries/${id}`, 'inquiry_updated');
+  return redirectWith(res, safeBack(req, `/admin/inquiries/${id}`), 'inquiry_updated');
 });
 
 router.post('/inquiries/:id/delete', (req, res) => {
