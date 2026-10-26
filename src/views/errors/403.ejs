@@ -1,0 +1,15 @@
+<%- include('../partials/head') %>
+
+<section class="error-page">
+  <div class="wrap">
+    <div class="error-code">403</div>
+    <h1 class="h2" style="margin-bottom:10px"><%= typeof title !== 'undefined' ? title : 'غير مصرح' %></h1>
+    <p class="muted" style="max-width:56ch;margin-inline:auto"><%= typeof message !== 'undefined' ? message : 'لا تملك صلاحية الوصول إلى هذه الصفحة.' %></p>
+    <div class="btn-row" style="justify-content:center">
+      <a class="btn" href="/">الصفحة الرئيسية</a>
+      <a class="btn btn--white" href="/admin">لوحة التحكم</a>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

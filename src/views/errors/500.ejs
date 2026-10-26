@@ -1,0 +1,15 @@
+<%- include('../partials/head') %>
+
+<section class="error-page">
+  <div class="wrap">
+    <div class="error-code">500</div>
+    <h1 class="h2" style="margin-bottom:10px"><%= typeof title !== 'undefined' ? title : 'حدث خطأ' %></h1>
+    <p class="muted" style="max-width:56ch;margin-inline:auto"><%= typeof message !== 'undefined' ? message : 'تعذّر إتمام الطلب.' %></p>
+    <div class="btn-row" style="justify-content:center">
+      <a class="btn" href="/">الصفحة الرئيسية</a>
+      <a class="btn btn--white" href="/contact">تواصل معنا</a>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>
