@@ -1,0 +1,138 @@
+<%- include('../partials/admin-head') %>
+
+<div class="helper">
+  لا يظهر أي عضو في صفحة «فريق العمل» العامة إلا بعد إدخال اسمه ورفع صورته الشخصية الحقيقية.
+  لن نستخدم صورًا بديلة أو صورًا رمزية توحي بأشخاص غير موجودين.
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>إضافة عضو</h2></div>
+  <form method="post" action="/admin/team" enctype="multipart/form-data" class="form-grid">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="name">الاسم</label>
+          <input class="input" id="name" name="name" type="text" required minlength="2" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="role_title">المسمى الوظيفي</label>
+          <input class="input" id="role_title" name="role_title" type="text" maxlength="120">
+        </div>
+      </div>
+      <div class="field">
+        <label for="bio">نبذة</label>
+        <textarea class="textarea" id="bio" name="bio" maxlength="1500"></textarea>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="phone">الهاتف (اختياري)</label>
+          <input class="input" id="phone" name="phone" type="text" maxlength="40" dir="ltr">
+        </div>
+        <div class="field">
+          <label for="email">البريد (اختياري)</label>
+          <input class="input" id="email" name="email" type="email" maxlength="180" dir="ltr">
+        </div>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="photo">الصورة الشخصية</label>
+          <input class="input input--file" id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" data-preview-target="#photo-preview">
+          <div id="photo-preview" class="preview-strip"></div>
+        </div>
+        <div class="field">
+          <label for="sort_order">الترتيب</label>
+          <input class="input" id="sort_order" name="sort_order" type="number" value="0" step="1">
+        </div>
+      </div>
+      <div class="field">
+        <label class="check">
+          <input type="checkbox" name="is_published" value="1">
+          نشر العضو على الموقع (لن يظهر بدون صورة)
+        </label>
+      </div>
+    </div>
+    <div class="panel__foot">
+      <button class="btn" type="submit">إضافة العضو</button>
+      <a class="btn btn--white" href="/team" target="_blank" rel="noopener">معاينة الصفحة ↗</a>
+    </div>
+  </form>
+</div>
+
+<% if (team.length) { %>
+  <% team.forEach(m => { %>
+    <div class="panel">
+      <div class="panel__head">
+        <h2><%= m.name %></h2>
+        <div class="btn-row">
+          <span class="chip chip--<%= m.is_published ? 'published' : 'draft' %>"><%= m.is_published ? 'منشور' : 'مخفي' %></span>
+          <% if (!m.image_path) { %><span class="chip chip--archived">بدون صورة</span><% } %>
+        </div>
+      </div>
+      <form method="post" action="/admin/team/<%= m.id %>" enctype="multipart/form-data" class="form-grid">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="panel__body">
+          <div class="form-grid form-grid--2">
+            <div class="field">
+              <label for="name-<%= m.id %>">الاسم</label>
+              <input class="input" id="name-<%= m.id %>" name="name" type="text" value="<%= m.name %>" maxlength="120">
+            </div>
+            <div class="field">
+              <label for="role-<%= m.id %>">المسمى الوظيفي</label>
+              <input class="input" id="role-<%= m.id %>" name="role_title" type="text" value="<%= m.role_title || '' %>" maxlength="120">
+            </div>
+          </div>
+          <div class="field">
+            <label for="bio-<%= m.id %>">نبذة</label>
+            <textarea class="textarea" id="bio-<%= m.id %>" name="bio" maxlength="1500"><%= m.bio || '' %></textarea>
+          </div>
+          <div class="form-grid form-grid--3">
+            <div class="field">
+              <label for="phone-<%= m.id %>">الهاتف</label>
+              <input class="input" id="phone-<%= m.id %>" name="phone" type="text" value="<%= m.phone || '' %>" maxlength="40" dir="ltr">
+            </div>
+            <div class="field">
+              <label for="email-<%= m.id %>">البريد</label>
+              <input class="input" id="email-<%= m.id %>" name="email" type="email" value="<%= m.email || '' %>" maxlength="180" dir="ltr">
+            </div>
+            <div class="field">
+              <label for="sort-<%= m.id %>">الترتيب</label>
+              <input class="input" id="sort-<%= m.id %>" name="sort_order" type="number" value="<%= m.sort_order %>" step="1">
+            </div>
+          </div>
+          <div class="form-grid form-grid--2">
+            <div class="field">
+              <label for="photo-<%= m.id %>">تغيير الصورة</label>
+              <input class="input input--file" id="photo-<%= m.id %>" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" data-preview-target="#photo-preview-<%= m.id %>">
+              <div id="photo-preview-<%= m.id %>" class="preview-strip">
+                <% if (m.image_path) { %><img src="/uploads/<%= m.image_path %>" alt="<%= m.name %>"><% } %>
+              </div>
+            </div>
+            <div class="field">
+              <label class="check">
+                <input type="checkbox" name="is_published" value="1" <%- m.is_published ? 'checked' : '' %>>
+                نشر العضو على الموقع
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="panel__foot">
+          <button class="btn btn--sm" type="submit">حفظ</button>
+        </div>
+      </form>
+      <div class="panel__body" style="padding-top:0">
+        <form method="post" action="/admin/team/<%= m.id %>/delete" data-confirm="سيتم حذف العضو وصورته نهائيًا. متابعة؟">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="btn btn--danger btn--sm" type="submit">حذف العضو</button>
+        </form>
+      </div>
+    </div>
+  <% }); %>
+<% } else { %>
+  <div class="empty-state">
+    <h3>لا يوجد أعضاء</h3>
+    <p>أضف البيانات الحقيقية لأعضاء الفريق مع صورهم. الصفحة العامة تعرض حالة فراغ واضحة حتى ذلك الحين.</p>
+  </div>
+<% } %>
+
+<%- include('../partials/admin-foot') %>
