@@ -252,6 +252,7 @@ function setupToken() {
 }
 
 module.exports = {
+  SESSION_COOKIE,
   parseCookies,
   hashPassword,
   verifyPassword,

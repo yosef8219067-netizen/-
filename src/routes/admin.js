@@ -16,6 +16,13 @@ const router = express.Router();
 
 const redirectWith = (res, target, msg) => res.redirect(`${target}${target.includes('?') ? '&' : '?'}msg=${encodeURIComponent(msg)}`);
 
+/** يمنع إعادة التوجيه إلى نطاق خارجي */
+function safeBack(req, fallback) {
+  const raw = U.str(req.body && req.body.return_to, 300);
+  if (raw.startsWith('/admin')) return raw;
+  return fallback;
+}
+
 function clientSafeFileName(name) {
   return String(name || '').slice(0, 180);
 }
