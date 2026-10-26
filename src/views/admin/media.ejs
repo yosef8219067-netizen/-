@@ -1,0 +1,79 @@
+<%- include('../partials/admin-head') %>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>مكتبة الوسائط</h2>
+    <a class="btn btn--sm" href="/admin/projects">ربط صورة بمشروع</a>
+  </div>
+  <div class="panel__body">
+    <form class="filters" method="get" action="/admin/media">
+      <div class="field">
+        <label for="project">المشروع</label>
+        <select class="select" id="project" name="project">
+          <option value="">كل المشروعات</option>
+          <% projects.forEach(p => { %>
+            <option value="<%= p.id %>" <%- Number(projectId) === p.id ? 'selected' : '' %>><%= p.title %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="field">
+        <label for="kind">النوع</label>
+        <select class="select" id="kind" name="kind">
+          <option value="">الكل</option>
+          <option value="image" <%- kind === 'image' ? 'selected' : '' %>>صور</option>
+          <option value="video" <%- kind === 'video' ? 'selected' : '' %>>فيديو</option>
+        </select>
+      </div>
+      <button class="btn btn--white" type="submit">تصفية</button>
+      <% if (projectId || kind) { %><a class="btn btn--white" href="/admin/media">إلغاء</a><% } %>
+    </form>
+    <p class="cell-sub">لرفع صور جديدة، افتح صفحة وسائط المشروع المطلوب. كل ملف يُربط بمشروعه ويحتفظ بترتيبه.</p>
+  </div>
+</div>
+
+<% if (items.length) { %>
+  <div class="media-grid">
+    <% items.forEach(m => { %>
+      <article class="media-card <%= m.is_primary ? 'media-card--primary' : '' %>">
+        <div class="media-card__frame">
+          <% if (m.kind === 'image') { %>
+            <img src="/uploads/<%= m.filename %>" alt="<%= m.alt || 'ملف وسائط' %>" loading="lazy">
+          <% } else { %>
+            <video src="/uploads/<%= m.filename %>" controls preload="metadata"></video>
+          <% } %>
+          <% if (m.is_primary) { %><span class="media-card__flag">رئيسية</span><% } %>
+        </div>
+        <div class="media-card__body">
+          <div class="cell-title"><%= m.project_title || 'غير مرتبط بمشروع' %></div>
+          <div class="cell-sub" dir="ltr"><%= m.filename %></div>
+          <div class="cell-sub"><%= m.kind === 'image' ? 'صورة' : 'فيديو' %> • <%= kb(m.size) %></div>
+          <div class="btn-row">
+            <% if (m.project_id) { %>
+              <a class="btn btn--sm btn--white" href="/admin/projects/<%= m.project_id %>/media">إدارة</a>
+            <% } %>
+            <% if (m.kind === 'image' && !m.is_primary) { %>
+              <form method="post" action="/admin/media/<%= m.id %>/primary">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <input type="hidden" name="return_to" value="/admin/media">
+                <button class="btn btn--sm" type="submit">رئيسية</button>
+              </form>
+            <% } %>
+            <form method="post" action="/admin/media/<%= m.id %>/delete" data-confirm="سيتم حذف الملف نهائيًا من الخادم. متابعة؟">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <input type="hidden" name="return_to" value="/admin/media">
+              <button class="btn btn--sm btn--danger" type="submit">حذف</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+<% } else { %>
+  <div class="empty-state">
+    <h3>لا توجد ملفات</h3>
+    <p>كل الصور والفيديوهات تُرفع من داخل صفحة المشروع، حتى ترتبط دائمًا بمشروع صحيح.</p>
+    <a class="btn" href="/admin/projects">اختيار مشروع</a>
+  </div>
+<% } %>
+
+<%- include('../partials/admin-foot') %>

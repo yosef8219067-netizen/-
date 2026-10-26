@@ -1,0 +1,98 @@
+<%- include('../partials/admin-head') %>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>رفع صور / فيديو — <%= project.title %></h2>
+    <div class="btn-row">
+      <a class="btn btn--sm btn--white" href="/admin/projects/<%= project.id %>/edit">تعديل البيانات</a>
+      <a class="btn btn--sm btn--white" href="/admin/projects/<%= project.slug %>/preview" target="_blank" rel="noopener">معاينة</a>
+    </div>
+  </div>
+  <div class="panel__body">
+    <form method="post" action="/admin/projects/<%= project.id %>/media" enctype="multipart/form-data" class="form-grid">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="field">
+        <label for="images">صور المشروع</label>
+        <input class="input input--file" id="images" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" multiple data-preview-target="#upload-preview">
+        <span class="hint">JPG أو PNG أو WebP أو AVIF. الحد الأقصى لكل صورة <%= maxImageMb %> ميجابايت. يمكن اختيار عدة صور معًا.</span>
+      </div>
+      <div class="field">
+        <label for="video">فيديو (اختياري)</label>
+        <input class="input input--file" id="video" name="video" type="file" accept="video/mp4,video/webm,video/quicktime">
+        <span class="hint">MP4 أو WebM. حد أقصى <%= maxVideoMb %> ميجابايت. للأحجام الكبيرة استخدم رابط فيديو خارجي من صفحة تعديل المشروع.</span>
+      </div>
+      <div id="upload-preview" class="preview-strip" aria-live="polite"></div>
+      <div class="btn-row">
+        <button class="btn" type="submit">رفع الملفات</button>
+        <span class="cell-sub">تُحفظ الملفات على القرص الدائم وتظل متاحة بعد إعادة النشر.</span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>الصور والفيديوهات (<%= ar(media.length) %>)</h2>
+    <span class="chip">الأول بالترتيب = الصورة الرئيسية إن لم تُحدَّد غيرها</span>
+  </div>
+
+  <% if (media.length) { %>
+    <div class="media-grid">
+      <% media.forEach((m, index) => { %>
+        <article class="media-card <%= m.is_primary ? 'media-card--primary' : '' %>">
+          <div class="media-card__frame">
+            <% if (m.kind === 'image') { %>
+              <img src="/uploads/<%= m.filename %>" alt="<%= m.alt || project.title %>" loading="lazy">
+            <% } else { %>
+              <video src="/uploads/<%= m.filename %>" controls preload="metadata"></video>
+            <% } %>
+            <% if (m.is_primary) { %><span class="media-card__flag">رئيسية</span><% } %>
+          </div>
+          <div class="media-card__body">
+            <div class="cell-sub" dir="ltr"><%= m.filename %></div>
+            <div class="cell-sub"><%= m.kind === 'image' ? 'صورة' : 'فيديو' %> • <%= kb(m.size) %> • ترتيب <%= ar(m.sort_order) %></div>
+            <div class="btn-row">
+              <% if (m.kind === 'image' && !m.is_primary) { %>
+                <form method="post" action="/admin/media/<%= m.id %>/primary">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <input type="hidden" name="return_to" value="/admin/projects/<%= project.id %>/media">
+                  <button class="btn btn--sm" type="submit">تعيين رئيسية</button>
+                </form>
+              <% } %>
+              <% if (index > 0) { %>
+                <form method="post" action="/admin/media/<%= m.id %>/move">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <input type="hidden" name="dir" value="up">
+                  <input type="hidden" name="return_to" value="/admin/projects/<%= project.id %>/media">
+                  <button class="btn btn--sm btn--white" type="submit" aria-label="تحريك لأعلى">↑</button>
+                </form>
+              <% } %>
+              <% if (index < media.length - 1) { %>
+                <form method="post" action="/admin/media/<%= m.id %>/move">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <input type="hidden" name="dir" value="down">
+                  <input type="hidden" name="return_to" value="/admin/projects/<%= project.id %>/media">
+                  <button class="btn btn--sm btn--white" type="submit" aria-label="تحريك لأسفل">↓</button>
+                </form>
+              <% } %>
+              <form method="post" action="/admin/media/<%= m.id %>/delete" data-confirm="سيتم حذف الملف نهائيًا من الخادم. متابعة؟">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <input type="hidden" name="return_to" value="/admin/projects/<%= project.id %>/media">
+                <button class="btn btn--sm btn--danger" type="submit">حذف</button>
+              </form>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="panel__body">
+      <div class="empty-state">
+        <h3>لم تُرفع صور بعد</h3>
+        <p>يظهر المشروع للزوار بحالة «لم تُرفع صور» — لن نستخدم صورًا تجريبية مكان صورك الأصلية.</p>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-foot') %>
