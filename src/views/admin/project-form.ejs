@@ -1,0 +1,184 @@
+<%- include('../partials/admin-head') %>
+
+<form method="post" action="<%= mode === 'create' ? '/admin/projects' : '/admin/projects/' + project.id %>" class="form-grid">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <div class="panel">
+    <div class="panel__head">
+      <h2>البيانات الأساسية</h2>
+      <div class="btn-row">
+        <% if (mode === 'edit') { %>
+          <a class="btn btn--sm btn--white" href="/admin/projects/<%= project.id %>/media">الصور والوسائط</a>
+          <a class="btn btn--sm btn--white" href="/admin/projects/<%= project.id %>/preview" target="_blank" rel="noopener">معاينة</a>
+        <% } %>
+      </div>
+    </div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="title">اسم المشروع *</label>
+          <input class="input" id="title" name="title" type="text" value="<%= project.title %>" required maxlength="160" data-slug-source>
+          <% if (errors.title) { %><span class="err"><%= errors.title %></span><% } %>
+        </div>
+        <div class="field">
+          <label for="slug">الرابط المختصر</label>
+          <input class="input" id="slug" name="slug" type="text" value="<%= project.slug %>" maxlength="160" dir="ltr" placeholder="يُولَّد تلقائيًا من الاسم" data-slug-target>
+          <span class="hint">سيظهر الرابط: /projects/<%= project.slug || 'اسم-المشروع' %></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="short_description">وصف مختصر (يظهر في البطاقات)</label>
+        <input class="input" id="short_description" name="short_description" type="text" value="<%= project.short_description || '' %>" maxlength="300">
+      </div>
+
+      <div class="field">
+        <label for="description">الوصف الكامل</label>
+        <textarea class="textarea" id="description" name="description" maxlength="12000"><%= project.description || '' %></textarea>
+        <span class="hint">اكتب فقرة لكل سطر مفصول بسطر فارغ. يُعرض النص كما هو بدون تفسير HTML.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>الموقع والتفاصيل</h2></div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="city">المدينة</label>
+          <input class="input" id="city" name="city" type="text" value="<%= project.city || '' %>" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="location">الموقع التفصيلي</label>
+          <input class="input" id="location" name="location" type="text" value="<%= project.location || '' %>" maxlength="200">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="map_url">رابط الخريطة</label>
+        <input class="input" id="map_url" name="map_url" type="url" value="<%= project.map_url || '' %>" maxlength="800" dir="ltr" placeholder="https://maps.google.com/...">
+        <% if (errors.map_url) { %><span class="err"><%= errors.map_url %></span><% } %>
+        <span class="hint">يُعرض كزر «فتح الموقع على الخريطة» — يقبل https فقط.</span>
+      </div>
+
+      <div class="form-grid form-grid--3">
+        <div class="field">
+          <label for="price_from">السعر يبدأ من</label>
+          <input class="input" id="price_from" name="price_from" type="text" value="<%= project.price_from || '' %>" maxlength="80" placeholder="مثال: 2,500,000 جنيه">
+        </div>
+        <div class="field">
+          <label for="area_from">المساحة تبدأ من (م²)</label>
+          <input class="input" id="area_from" name="area_from" type="text" value="<%= project.area_from || '' %>" maxlength="40">
+        </div>
+        <div class="field">
+          <label for="area_to">المساحة حتى (م²)</label>
+          <input class="input" id="area_to" name="area_to" type="text" value="<%= project.area_to || '' %>" maxlength="40">
+        </div>
+      </div>
+
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="unit_types">أنواع الوحدات</label>
+          <input class="input" id="unit_types" name="unit_types" type="text" value="<%= project.unit_types || '' %>" maxlength="200" placeholder="شقق، فيلات، محلات">
+        </div>
+        <div class="field">
+          <label for="availability">حالة التوافر</label>
+          <input class="input" id="availability" name="availability" type="text" value="<%= project.availability || '' %>" maxlength="120" placeholder="متاح / محدود / اكتمل البيع">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="video_url">رابط فيديو المشروع</label>
+        <input class="input" id="video_url" name="video_url" type="url" value="<%= project.video_url || '' %>" maxlength="800" dir="ltr" placeholder="https://youtu.be/... أو https://.../video.mp4">
+        <% if (errors.video_url) { %><span class="err"><%= errors.video_url %></span><% } %>
+        <span class="hint">يدعم يوتيوب، فيميو، أو رابط ملف فيديو مباشر. يمكنك أيضًا رفع فيديو من صفحة الوسائط.</span>
+      </div>
+
+      <div class="helper">
+        لا تضع أي سعر أو مواصفة غير مؤكدة. الحقول الفارغة لا تُعرض للزوار إطلاقًا.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head"><h2>النشر والظهور</h2></div>
+    <div class="panel__body">
+      <div class="form-grid form-grid--3">
+        <div class="field">
+          <label for="status">حالة المشروع</label>
+          <select class="select" id="status" name="status">
+            <option value="draft" <%- project.status === 'draft' ? 'selected' : '' %>>مسودة (غير ظاهر)</option>
+            <option value="published" <%- project.status === 'published' ? 'selected' : '' %>>منشور (ظاهر للزوار)</option>
+            <option value="archived" <%- project.status === 'archived' ? 'selected' : '' %>>مؤرشف</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sort_order">ترتيب العرض</label>
+          <input class="input" id="sort_order" name="sort_order" type="number" value="<%= project.sort_order || 0 %>" step="1">
+          <span class="hint">الأصغر يظهر أولًا.</span>
+        </div>
+        <div class="field" style="justify-content:end">
+          <label class="check">
+            <input type="checkbox" name="is_featured" value="1" <%- project.is_featured ? 'checked' : '' %>>
+            مشروع مميز (يظهر أولًا وعلى الصفحة الرئيسية)
+          </label>
+        </div>
+      </div>
+
+      <div class="form-grid form-grid--2">
+        <div class="field">
+          <label for="seo_title">عنوان SEO</label>
+          <input class="input" id="seo_title" name="seo_title" type="text" value="<%= project.seo_title || '' %>" maxlength="200">
+        </div>
+        <div class="field">
+          <label for="seo_description">وصف SEO</label>
+          <input class="input" id="seo_description" name="seo_description" type="text" value="<%= project.seo_description || '' %>" maxlength="300">
+        </div>
+      </div>
+    </div>
+    <div class="panel__foot">
+      <button class="btn" type="submit"><%= mode === 'create' ? 'حفظ المشروع' : 'حفظ التغييرات' %></button>
+      <a class="btn btn--white" href="/admin/projects">رجوع للقائمة</a>
+      <% if (mode === 'create') { %>
+        <span class="cell-sub">سيُحفظ كمسودة أو منشورًا حسب اختيارك أعلاه.</span>
+      <% } %>
+    </div>
+  </div>
+</form>
+
+<% if (mode === 'edit') { %>
+  <div class="panel">
+    <div class="panel__head">
+      <h2>وسائط المشروع (<%= ar(media.length) %>)</h2>
+      <a class="btn btn--sm" href="/admin/projects/<%= project.id %>/media">إدارة الصور والترتيب</a>
+    </div>
+    <div class="panel__body">
+      <% if (media.length) { %>
+        <div class="preview-strip">
+          <% media.slice(0, 12).forEach(m => { %>
+            <% if (m.kind === 'image') { %>
+              <img src="/uploads/<%= m.filename %>" alt="<%= m.alt || project.title %>" loading="lazy">
+            <% } else { %>
+              <span class="chip">فيديو</span>
+            <% } %>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+          <h3>لا توجد صور لهذا المشروع</h3>
+          <p>ارفع الصور الأصلية للمشروع من صفحة الوسائط. بدون صور، تظهر البطاقة بحالة «لم تُرفع صور» بدلًا من صورة تجريبية.</p>
+          <a class="btn" href="/admin/projects/<%= project.id %>/media">رفع صور</a>
+        </div>
+      <% } %>
+    </div>
+    <div class="panel__foot">
+      <form method="post" action="/admin/projects/<%= project.id %>/delete" data-confirm="سيتم حذف المشروع وكل صوره نهائيًا. هل تريد المتابعة؟">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="confirm" value="1">
+        <button class="btn btn--danger btn--sm" type="submit">حذف المشروع نهائيًا</button>
+      </form>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../partials/admin-foot') %>
