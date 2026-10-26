@@ -285,8 +285,8 @@ function handleInquiry(req, res, projectId, rerender) {
 
   if (projectId) {
     const project = get('SELECT slug FROM projects WHERE id = ?', [projectId]);
-    const slug = project ? `/${project.slug}` : '';
-    return res.redirect(`${slug ? `/projects/${slug}` : ''}?msg=inquiry_sent#inquiry`);
+    const target = project ? `/projects/${project.slug}` : '/projects';
+    return res.redirect(`${target}?msg=inquiry_sent#inquiry`);
   }
   return res.redirect('/contact?msg=inquiry_sent#inquiry');
 }
