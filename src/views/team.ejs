@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><span>فريق العمل</span>
+    </nav>
+    <h1>فريق العمل</h1>
+    <p>لا يُعرض هنا إلا من أُضيفت بياناته فعلًا من لوحة التحكم.</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <% if (team.length) { %>
+      <div class="grid grid--3">
+        <% team.forEach(member => { %>
+          <article class="member">
+            <div class="member__photo">
+              <% if (member.image_path) { %>
+                <img src="/uploads/<%= member.image_path %>" alt="<%= member.name %>" loading="lazy" decoding="async">
+              <% } else { %>
+                <div class="ph"><span class="ph__mark">م</span><span class="ph__text">لم تُرفع صورة</span></div>
+              <% } %>
+            </div>
+            <div class="member__body">
+              <div class="member__name"><%= member.name %></div>
+              <% if (member.role_title) { %><div class="member__role"><%= member.role_title %></div><% } %>
+              <% if (member.bio) { %><p style="font-size:.88rem;color:var(--muted)"><%= member.bio %></p><% } %>
+              <% if (member.phone) { %>
+                <a href="tel:<%= member.phone %>" class="card__link" style="font-size:.84rem">اتصال: <span dir="ltr"><%= member.phone %></span></a>
+              <% } %>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty__title">لم تُضف بيانات فريق العمل بعد</div>
+        <p class="empty__text">
+          نعرض أسماء وصور الفريق فقط بعد إدخالها والتحقق منها من لوحة التحكم، ولا ننشئ بيانات أو صورًا افتراضية.
+        </p>
+        <a class="btn btn--navy" href="/contact">تواصل مع الشركة</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

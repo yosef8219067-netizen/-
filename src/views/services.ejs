@@ -1,0 +1,47 @@
+<%- include('partials/head') %>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <nav class="crumbs" aria-label="مسار التصفح">
+      <a href="/">الرئيسية</a><span>/</span><span>الخدمات</span>
+    </nav>
+    <h1>خدماتنا</h1>
+    <p>الخدمات المعروضة هنا هي ما تُقرّه الشركة فعلًا، وتُدار بالكامل من لوحة التحكم.</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <% if (services.length) { %>
+      <div class="grid grid--3">
+        <% services.forEach((service, i) => { %>
+          <article class="service">
+            <span class="service__num"><%= String(i + 1).padStart(2, '0') %></span>
+            <h2 class="service__title"><%= service.title %></h2>
+            <p class="service__desc"><%= service.description %></p>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="empty__title">لا توجد خدمات منشورة</div>
+        <p class="empty__text">تُضاف الخدمات وتُنشر من لوحة التحكم، وتظهر هنا فور النشر.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap cta-band__inner">
+    <div>
+      <h2>تحتاج خدمة أو استشارة محددة؟</h2>
+      <p style="margin-top:10px;color:#c7d2e4">تواصل معنا وسنوضح لك ما يمكن تقديمه فعليًا قبل أي التزام.</p>
+    </div>
+    <div class="cta-band__actions">
+      <a class="btn" href="<%= S.telLink(settings.phone_intl || settings.phone_display) %>"><span dir="ltr"><%= settings.phone_display %></span></a>
+      <a class="btn btn--white" href="/contact">راسلنا</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>
