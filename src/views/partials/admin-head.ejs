@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> | <%= settings.company_name %></title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-side" id="adminSide">
+    <div class="admin-brand">
+      <span class="admin-brand__mark" aria-hidden="true">م</span>
+      <span class="admin-brand__text">
+        <strong><%= settings.company_name %></strong>
+        <span>لوحة التحكم</span>
+      </span>
+    </div>
+
+    <nav class="admin-nav" aria-label="أقسام لوحة التحكم">
+      <% adminNav.filter(item => !item.adminOnly || user.role === 'admin').forEach(item => { %>
+        <% const active = (adminSection || '') === item.key; %>
+        <a href="<%= item.href %>" <%- active ? 'class="is-active" aria-current="page"' : '' %>>
+          <span><%= item.label %></span>
+          <span aria-hidden="true"><%= active ? '●' : '○' %></span>
+        </a>
+      <% }); %>
+    </nav>
+
+    <div class="admin-side__foot">
+      <span>النسخة 1.0 — SQLite دائمة</span>
+      <a href="/" target="_blank" rel="noopener">فتح الموقع ↗</a>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn--sm btn--white" type="submit" style="width:100%">تسجيل الخروج</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-top">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="admin-menu-btn" type="button" id="adminMenuBtn" aria-controls="adminSide" aria-expanded="false" aria-label="فتح القائمة">☰</button>
+        <h1><%= pageTitle %></h1>
+      </div>
+      <div class="admin-top__user">
+        <span><%= user.name %></span>
+        <span class="badge-role <%= user.role === 'admin' ? 'badge-role--admin' : '' %>"><%= ROLE_LABEL[user.role] %></span>
+        <a class="btn btn--white btn--sm" href="/admin/account">حسابي</a>
+      </div>
+    </header>
+
+    <div class="admin-body">
+      <%- include('admin-toast') %>
