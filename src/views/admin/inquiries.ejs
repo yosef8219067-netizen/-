@@ -1,0 +1,75 @@
+<%- include('../partials/admin-head') %>
+
+<div class="kpis">
+  <div class="kpi"><div class="kpi__num"><%= ar(counts.all) %></div><div class="kpi__label">كل الطلبات</div></div>
+  <div class="kpi"><div class="kpi__num"><%= ar(counts.new) %></div><div class="kpi__label">جديد</div><small>يحتاج متابعة</small></div>
+  <div class="kpi"><div class="kpi__num"><%= ar(counts.in_progress) %></div><div class="kpi__label">قيد المتابعة</div></div>
+  <div class="kpi"><div class="kpi__num"><%= ar(counts.done) %></div><div class="kpi__label">مكتمل</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>بحث وتصفية</h2></div>
+  <div class="panel__body">
+    <form class="filters" method="get" action="/admin/inquiries">
+      <div class="field" style="flex:1 1 240px">
+        <label for="q">بحث</label>
+        <input class="input" id="q" name="q" type="search" value="<%= q %>" placeholder="اسم / هاتف / نص الرسالة">
+      </div>
+      <div class="field">
+        <label for="status">الحالة</label>
+        <select class="select" id="status" name="status">
+          <option value="">كل الحالات</option>
+          <option value="new" <%- status === 'new' ? 'selected' : '' %>>جديد</option>
+          <option value="in_progress" <%- status === 'in_progress' ? 'selected' : '' %>>قيد المتابعة</option>
+          <option value="done" <%- status === 'done' ? 'selected' : '' %>>مكتمل</option>
+        </select>
+      </div>
+      <button class="btn btn--white" type="submit">تطبيق</button>
+      <% if (q || status) { %><a class="btn btn--white" href="/admin/inquiries">إلغاء</a><% } %>
+    </form>
+  </div>
+</div>
+
+<% if (inquiries.length) { %>
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>الاسم</th>
+          <th>الهاتف</th>
+          <th>المشروع</th>
+          <th>الرسالة</th>
+          <th>الحالة</th>
+          <th>التاريخ</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% inquiries.forEach(i => { %>
+          <tr>
+            <td class="mono-num"><%= ar(i.id) %></td>
+            <td class="cell-title"><%= i.name %></td>
+            <td><a href="tel:<%= i.phone %>" dir="ltr"><%= i.phone %></a></td>
+            <td class="cell-sub"><%= i.project_title || '—' %></td>
+            <td class="cell-sub"><%= String(i.message || '').slice(0, 70) %><%= String(i.message || '').length > 70 ? '…' : '' %></td>
+            <td><span class="chip chip--<%= i.status %>"><%= INQUIRY_STATUS[i.status] || i.status %></span></td>
+            <td class="cell-sub"><%= ago(i.created_at) %></td>
+            <td><a class="btn btn--sm" href="/admin/inquiries/<%= i.id %>">فتح</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+<% } else { %>
+  <div class="empty-state">
+    <h3><%= q || status ? 'لا توجد طلبات مطابقة' : 'لا توجد طلبات بعد' %></h3>
+    <p><%= q || status ? 'جرّب تغيير كلمة البحث أو الحالة.' : 'ستظهر هنا كل رسالة تُرسل من صفحة التواصل أو من صفحة تفاصيل مشروع.' %></p>
+  </div>
+<% } %>
+
+<div class="helper">
+  بيانات العملاء لا تظهر أبدًا في الصفحات العامة. الوصول لهذه الصفحة متاح للحسابات المسجّلة فقط بعد التحقق من الجلسة على الخادم.
+</div>
+
+<%- include('../partials/admin-foot') %>

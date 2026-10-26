@@ -1,0 +1,65 @@
+<%- include('../partials/admin-head') %>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>طلب #<%= ar(inquiry.id) %></h2>
+    <span class="chip chip--<%= inquiry.status %>"><%= INQUIRY_STATUS[inquiry.status] || inquiry.status %></span>
+  </div>
+  <div class="panel__body">
+    <dl class="detail-list">
+      <div><dt>الاسم</dt><dd><%= inquiry.name %></dd></div>
+      <div><dt>الهاتف</dt><dd><a href="tel:<%= inquiry.phone %>" dir="ltr"><%= inquiry.phone %></a></dd></div>
+      <div><dt>المشروع</dt><dd>
+        <% if (inquiry.project_title) { %>
+          <%= inquiry.project_title %>
+          <% if (inquiry.project_slug) { %>
+            — <a href="/projects/<%= inquiry.project_slug %>" target="_blank" rel="noopener">صفحة المشروع ↗</a>
+          <% } %>
+        <% } else { %>—<% } %>
+      </dd></div>
+      <div><dt>تاريخ الإرسال</dt><dd><%= fmt(inquiry.created_at) %> (<%= ago(inquiry.created_at) %>)</dd></div>
+      <div><dt>آخر تحديث</dt><dd><%= inquiry.updated_at ? fmt(inquiry.updated_at) : '—' %></dd></div>
+      <div><dt>الصفحة المصدر</dt><dd class="cell-sub" dir="ltr"><%= inquiry.source_path || '—' %></dd></div>
+    </dl>
+
+    <h3 style="margin-top:22px">الرسالة</h3>
+    <div class="message-box"><%= inquiry.message %></div>
+
+    <div class="btn-row" style="margin-top:14px">
+      <a class="btn btn--white" href="tel:<%= inquiry.phone %>">اتصال</a>
+      <a class="btn btn--white" href="<%= S.whatsappLink(inquiry.phone, 'مرحبًا ' + inquiry.name + '، بخصوص استفسارك في ' + settings.company_name) %>" target="_blank" rel="noopener">واتساب</a>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head"><h2>متابعة الطلب</h2></div>
+  <form method="post" action="/admin/inquiries/<%= inquiry.id %>" class="form-grid">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="panel__body">
+      <div class="field">
+        <label for="status">حالة الطلب</label>
+        <select class="select" id="status" name="status">
+          <option value="new" <%- inquiry.status === 'new' ? 'selected' : '' %>>جديد</option>
+          <option value="in_progress" <%- inquiry.status === 'in_progress' ? 'selected' : '' %>>قيد المتابعة</option>
+          <option value="done" <%- inquiry.status === 'done' ? 'selected' : '' %>>مكتمل</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="admin_notes">ملاحظات داخلية</label>
+        <textarea class="textarea" id="admin_notes" name="admin_notes" maxlength="4000"><%= inquiry.admin_notes || '' %></textarea>
+        <span class="hint">لا تظهر للعميل ولا في الموقع العام.</span>
+      </div>
+    </div>
+    <div class="panel__foot">
+      <button class="btn" type="submit">حفظ المتابعة</button>
+      <a class="btn btn--white" href="/admin/inquiries">رجوع للقائمة</a>
+      <form method="post" action="/admin/inquiries/<%= inquiry.id %>/delete" data-confirm="سيتم حذف الطلب وبيانات العميل نهائيًا. متابعة؟" style="margin-inline-start:auto">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn--danger btn--sm" type="submit">حذف الطلب</button>
+      </form>
+    </div>
+  </form>
+</div>
+
+<%- include('../partials/admin-foot') %>
