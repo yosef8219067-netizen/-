@@ -1,0 +1,201 @@
+<%- include('../partials/admin-head') %>
+
+<div class="kpis">
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.published) %></div>
+    <div class="kpi__label">مشروع منشور</div>
+    <small>يظهر للزوار الآن</small>
+  </div>
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.drafts) %></div>
+    <div class="kpi__label">مسودة / مؤرشف</div>
+    <small>غير ظاهر للزوار</small>
+  </div>
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.newInquiries) %></div>
+    <div class="kpi__label">طلب جديد</div>
+    <small>من إجمالي <%= ar(counts.inquiries) %> طلب</small>
+  </div>
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.users) %></div>
+    <div class="kpi__label">مستخدم</div>
+    <small><%= ar(counts.admins) %> مدير • <%= ar(counts.staff) %> موظف</small>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.media) %></div>
+    <div class="kpi__label">ملف وسائط</div>
+    <small>مخزّن على القرص الدائم</small>
+  </div>
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.services) %></div>
+    <div class="kpi__label">خدمة</div>
+    <small>قابلة للنشر/الإخفاء</small>
+  </div>
+  <div class="kpi">
+    <div class="kpi__num"><%= ar(counts.team) %></div>
+    <div class="kpi__label">عضو فريق</div>
+    <small>يظهر عند إضافة صورة وبيانات</small>
+  </div>
+  <div class="kpi">
+    <div class="kpi__num"><a href="/projects" target="_blank" rel="noopener" style="font-size:.9rem">معاينة الموقع ↗</a></div>
+    <div class="kpi__label">الصفحات العامة</div>
+    <small>تُحدَّث من قاعدة البيانات</small>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>خطوات البدء</h2>
+    <span class="chip chip--published">إعداد سريع</span>
+  </div>
+  <div class="panel__body">
+    <% if (counts.published === 0) { %>
+      <div class="helper">
+        <strong>لا يوجد مشروع منشور بعد.</strong> الموقع يعرض حالة فراغ صريحة بدلًا من بيانات تجريبية.
+        أضف مشروعًا حقيقيًا وارفع صوره من تبويب المشروعات، ثم اضغط «نشر» ليظهر للزوار فورًا.
+      </div>
+    <% } else { %>
+      <div class="helper">
+        <strong>الموقع يعرض <%= ar(counts.published) %> مشروعًا منشورًا.</strong>
+        أي تعديل تحفظه هنا يظهر على الموقع مباشرة دون إعادة نشر الكود.
+      </div>
+    <% } %>
+    <div class="btn-row">
+      <a class="btn" href="/admin/projects/new">+ إضافة مشروع</a>
+      <a class="btn btn--white" href="/admin/media">إدارة الصور</a>
+      <a class="btn btn--white" href="/admin/inquiries">طلبات العملاء</a>
+      <% if (user.role === 'admin') { %>
+        <a class="btn btn--white" href="/admin/settings">إعدادات الموقع</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>أحدث المشروعات</h2>
+    <a class="btn btn--sm btn--white" href="/admin/projects">إدارة المشروعات</a>
+  </div>
+  <% if (recentProjects.length) { %>
+    <div class="table-wrap" style="border:0;box-shadow:none">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>الصورة</th>
+            <th>المشروع</th>
+            <th>الحالة</th>
+            <th>آخر تحديث</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentProjects.forEach(p => { %>
+            <tr>
+              <td>
+                <% if (p.primary_image) { %>
+                  <img class="thumb" src="/uploads/<%= p.primary_image %>" alt="<%= p.title %>" loading="lazy">
+                <% } else { %>
+                  <span class="thumb thumb--empty">بدون صورة</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="cell-title"><%= p.title %></div>
+                <div class="cell-sub"><%= p.city || p.location || 'بدون موقع' %></div>
+              </td>
+              <td><span class="chip chip--<%= p.status %>"><%= PROJECT_STATUS[p.status] || p.status %></span></td>
+              <td class="cell-sub"><%= ago(p.updated_at) %></td>
+              <td>
+                <div class="btn-row">
+                  <a class="btn btn--sm btn--white" href="/admin/projects/<%= p.id %>/edit">تعديل</a>
+                  <a class="btn btn--sm btn--white" href="/admin/projects/<%= p.id %>/preview" target="_blank" rel="noopener">معاينة</a>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="panel__body">
+      <div class="empty-state">
+        <h3>لا توجد مشروعات بعد</h3>
+        <p>ابدأ بإضافة أول مشروع ورفع صوره الحقيقية.</p>
+        <a class="btn" href="/admin/projects/new">+ إضافة مشروع</a>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>أحدث الطلبات</h2>
+    <a class="btn btn--sm btn--white" href="/admin/inquiries">كل الطلبات</a>
+  </div>
+  <% if (recentInquiries.length) { %>
+    <div class="table-wrap" style="border:0;box-shadow:none">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>الهاتف</th>
+            <th>المشروع</th>
+            <th>الحالة</th>
+            <th>التاريخ</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% recentInquiries.forEach(i => { %>
+            <tr>
+              <td class="mono-num"><%= ar(i.id) %></td>
+              <td class="cell-title"><%= i.name %></td>
+              <td><a href="tel:<%= i.phone %>" dir="ltr"><%= i.phone %></a></td>
+              <td class="cell-sub"><%= i.project_title || '—' %></td>
+              <td><span class="chip chip--<%= i.status %>"><%= INQUIRY_STATUS[i.status] || i.status %></span></td>
+              <td class="cell-sub"><%= ago(i.created_at) %></td>
+              <td><a class="btn btn--sm btn--white" href="/admin/inquiries/<%= i.id %>">فتح</a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="panel__body">
+      <div class="empty-state">
+        <h3>لا توجد طلبات بعد</h3>
+        <p>كل رسالة تُرسل من صفحة التواصل أو من صفحة مشروع تظهر هنا مباشرة.</p>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    <h2>آخر التغييرات الإدارية</h2>
+    <% if (user.role === 'admin') { %><a class="btn btn--sm btn--white" href="/admin/activity">السجل الكامل</a><% } %>
+  </div>
+  <div class="panel__body">
+    <% if (activity.length) { %>
+      <ul class="activity-list">
+        <% activity.forEach(log => { %>
+          <li>
+            <span>
+              <strong><%= log.user_name || 'النظام' %></strong>
+              — <%= log.action %>
+              <% if (log.details) { %><span class="cell-sub">(<%= log.details %>)</span><% } %>
+            </span>
+            <time datetime="<%= log.created_at %>"><%= ago(log.created_at) %></time>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p class="cell-sub">لم تُسجَّل عمليات إدارية بعد.</p>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/admin-foot') %>
